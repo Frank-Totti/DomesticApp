@@ -21,6 +21,7 @@ func createDummyUser() {
 		Email:         "default@example.com",
 		PublicService: []byte{}}
 
+	config.Db.FirstOrCreate(&dummy.Person)
 	config.Db.FirstOrCreate(&dummy)
 
 }
