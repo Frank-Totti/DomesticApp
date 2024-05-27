@@ -41,10 +41,10 @@ type Professional struct {
 
 type Service struct {
 	gorm.Model
-	SID         uint `gorm:"primaryKey;autoIncrement"`
+	SID         uint   `gorm:"primaryKey;autoIncrement"`
+	Type        string `gorm:"not null;varchar(100);unique"`
 	Description string
-	Type        string `gorm:"not null;varchar(100)"`
-	State       string `gorm:"not null;varchar(30)"`
+	State       bool `gorm:"varchar(30);default:true"`
 }
 
 /*

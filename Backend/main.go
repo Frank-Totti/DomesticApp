@@ -55,14 +55,21 @@ func main() {
 
 	domesticApp.HandleFunc("/", routes.HomeHandler)
 
-	// User Routes
-	domesticApp.HandleFunc("/users", routes.GetUsersHandler).Methods("GET")      // get all users
-	domesticApp.HandleFunc("/users/{id}", routes.GetUserHandler).Methods("GET")  // get an specific user
-	domesticApp.HandleFunc("/users", routes.CreateUserHandler).Methods("POST")   // create a user
-	domesticApp.HandleFunc("/users", routes.UpdateUserHandler).Methods("PUT")    // update a user
-	domesticApp.HandleFunc("/users", routes.DeleteUserHandler).Methods("DELETE") // delete a user
+	//////////////////////////////////////////////////////////////////////// User Routes
+	domesticApp.HandleFunc("/users/search", routes.GetUsersHandler).Methods("GET")      // get all users
+	domesticApp.HandleFunc("/users/search/{id}", routes.GetUserHandler).Methods("GET")  // get an specific user
+	domesticApp.HandleFunc("/users/create", routes.CreateUserHandler).Methods("POST")   // create a user
+	domesticApp.HandleFunc("/users/update", routes.UpdateUserHandler).Methods("PUT")    // update a user
+	domesticApp.HandleFunc("/users/delete", routes.DeleteUserHandler).Methods("DELETE") // delete a user
 
-	// Professional Routes
+	//////////////////////////////////////////////////////////////////////// Services Routes
+
+	domesticApp.HandleFunc("/services/search/true", routes.GetActiveServices).Methods("GET")
+	domesticApp.HandleFunc("/services/search/false", routes.GetNotActiveServices).Methods("GET")
+	domesticApp.HandleFunc("/services/create", routes.CreateService).Methods("POST")
+	domesticApp.HandleFunc("/services/update/TD", routes.UpdateTypeDescriptionService).Methods("PUT") // TD = Type or Description
+	domesticApp.HandleFunc("/services/update/setTrue", routes.SetTrueServiceState)
+	domesticApp.HandleFunc("/services/update/setFalse", routes.SetFalseServiceState)
 
 	http.ListenAndServe(":3000", domesticApp)
 
