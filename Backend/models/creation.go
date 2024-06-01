@@ -80,7 +80,7 @@ type Request struct {
 	UserID         uint `gorm:"not null"`
 	ProfessionalID uint `gorm:"not null"`
 	SID            uint `gorm:"not null"`
-	TravelHour     int
+	TravelHour     time.Time
 	State          string `gorm:"varchar(50)"`
 
 	User         User         `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:SET DEFAULT"`
