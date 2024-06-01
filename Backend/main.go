@@ -71,6 +71,16 @@ func main() {
 	domesticApp.HandleFunc("/services/update/setTrue", routes.SetTrueServiceState)
 	domesticApp.HandleFunc("/services/update/setFalse", routes.SetFalseServiceState)
 
+	//////////////////////////////////////////////////////////////////////// Request Routes
+	domesticApp.HandleFunc("/requests/create",routes.CreateRequest).Methods("POST")
+	domesticApp.HandleFunc("/request/search/true", routes.GetActiveRequests).Methods("GET")
+	domesticApp.HandleFunc("/request/search/false", routes.GetNotActiveRequests).Methods("GET")
+	domesticApp.HandleFunc("/request/update/TH", routes.UpdateTravelHour).Methods("PUT")
+	domesticApp.HandleFunc("/request/update/setTrue", routes.SetTrueRequestState)
+	domesticApp.HandleFunc("/request/update/setFalse", routes.SetFalseRequestState)
+
+
+
 	http.ListenAndServe(":3000", domesticApp)
 
 }
