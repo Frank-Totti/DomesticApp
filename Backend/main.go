@@ -80,6 +80,12 @@ func main() {
 	domesticApp.HandleFunc("/request/update/setFalse", routes.SetFalseRequestState)
 
 
+	//////////////////////////////////////////////////////////////////////// Request Bills
+	domesticApp.HandleFunc("/bills/create",routes.CreateBill).Methods("POST")
+	domesticApp.HandleFunc("/bills/search", routes.GetBillsHandler).Methods("GET")
+	domesticApp.HandleFunc("/bills/search/{id}", routes.GetBillHandler).Methods("GET")
+	domesticApp.HandleFunc("/bills/update", routes.UpdateBill).Methods("PUT")
+
 
 	http.ListenAndServe(":3000", domesticApp)
 
