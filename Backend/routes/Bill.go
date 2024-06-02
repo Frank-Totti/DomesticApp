@@ -92,7 +92,7 @@ func GetBillHandler(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	if err := transation.First(&bills, params["id"]).Error; err != nil {
+	if err := transation.First(&bill, params["id"]).Error; err != nil {
 		transation.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find bill"})
@@ -107,7 +107,7 @@ func GetBillHandler(w http.ResponseWriter, r *http.Request){
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(&user)
+	json.NewEncoder(w).Encode(&bill)
 }
 
 func UpdateBill(w http.ResponseWriter, r *http.Request){
@@ -115,7 +115,7 @@ func UpdateBill(w http.ResponseWriter, r *http.Request){
 	var requestBill forms.UpdateBill
 	var bill models.Bill
 
-	err := json.NewDecoder(r.Body).Decode(&request)
+	err := json.NewDecoder(r.Body).Decode(&requestBill)
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -132,14 +132,14 @@ func UpdateBill(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	if err := transaction.First(&bill, request.ID).Error; err != nil {
+	if err := transaction.First(&bill, requestBill.ID).Error; err != nil {
 		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find bill"})
 		return
 	}
 
-	if err := transaction.Model(&service).Updates(map[string]interface{}{
+	if err := transaction.Model(&bill).Updates(map[string]interface{}{
 		"InitWorkHour": request.InitWorkHour, 
 		"FinalWorkHour": request.FinalWorkHour,
 		"FinalTravelHour": request.FinalTravelHour,
@@ -158,5 +158,5 @@ func UpdateBill(w http.ResponseWriter, r *http.Request){
 		return
 	}
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(&service)
+	json.NewEncoder(w).Encode(&bill)
 }
