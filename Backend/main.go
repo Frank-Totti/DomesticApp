@@ -86,6 +86,14 @@ func main() {
 	domesticApp.HandleFunc("/bills/search/{id}", routes.GetBillHandler).Methods("GET")
 	domesticApp.HandleFunc("/bills/update", routes.UpdateBill).Methods("PUT")
 
+	//////////////////////////////////////////////////////////////////////// Request Payments
+	domesticApp.HandleFunc("/payments/create",routes.CreatePaymentHandler).Methods("POST")
+	domesticApp.HandleFunc("/payments/search/{id}", routes.GetPaymentHandler).Methods("GET")
+	domesticApp.HandleFunc("/payments/update/TP", routes.UpdateTotalPayment).Methods("PUT")
+	domesticApp.HandleFunc("/payments/update/setNequi", routes.SetPaymentMethodNequi)
+	domesticApp.HandleFunc("/payments/update/setTransferencia", routes.SetPaymentMethodTransferencia)
+	domesticApp.HandleFunc("/payments/update/setEfectivo", routes.SetPaymentMethodEfectivo)
+
 
 	http.ListenAndServe(":3000", domesticApp)
 
