@@ -154,6 +154,13 @@ func DeletePunctuationHandler(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
+	if err := transaction.Where("SPID = ?", request.ID).Delete(&PunctuationType{}).Error; err != nil {
+		transaction.Rollback()
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to delete on cascade"})
+		return
+	}
+
 	if err := transaction.Delete(&punctuation).Error; err != nil {
 		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
