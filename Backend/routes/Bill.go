@@ -53,22 +53,22 @@ func GetBillsHandler(w http.ResponseWriter, r *http.Request){
 
 	transaction := config.Db.Begin()
 
-	if err := transation.Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to start transaction"})
 		return
 	}
 
-	if err := transation.Find(&bills).Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Find(&bills).Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find bill data"})
 		return
 	}
 
-	if err := transation.Commit().Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Commit().Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to commit transaction"})
 		return
@@ -83,24 +83,24 @@ func GetBillHandler(w http.ResponseWriter, r *http.Request){
 
 	params := mux.Vars(r)
 
-	transation := config.Db.Begin()
+	transaction := config.Db.Begin()
 
-	if err := transation.Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to start transaction"})
 		return
 	}
 
-	if err := transation.First(&bill, params["id"]).Error; err != nil {
-		transation.Rollback()
+	if err := transaction.First(&bill, params["id"]).Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find bill"})
 		return
 	}
 
-	if err := transation.Commit().Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Commit().Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to commit transaction"})
 		return
