@@ -28,32 +28,32 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	transation := config.Db.Begin()
+	transaction := config.Db.Begin()
 
-	if transation.Error != nil {
+	if transaction.Error != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to start transaction"})
 		return
 	}
 
-	if err := transation.Create(&user.Person).Error; err != nil {
+	if err := transaction.Create(&user.Person).Error; err != nil {
 
-		transation.Rollback()
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to create person"})
 		return
 
 	}
 
-	if err := transation.Create(&user).Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Create(&user).Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to create user"})
 		return
 	}
 
-	if err := transation.Commit().Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Commit().Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to commit transaction"})
 		return
@@ -68,24 +68,24 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 
-	transation := config.Db.Begin()
+	transaction := config.Db.Begin()
 
-	if err := transation.Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to start transaction"})
 		return
 	}
 
-	if err := transation.Preload("Person").First(&user, params["id"]).Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Preload("Person").First(&user, params["id"]).Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
 		return
 	}
 
-	if err := transation.Commit().Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Commit().Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to commit transaction"})
 		return
@@ -100,23 +100,23 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 
 	var users []models.User
 
-	transation := config.Db.Begin()
+	transaction := config.Db.Begin()
 
-	if transation.Error != nil {
+	if transaction.Error != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to start transaction"})
 		return
 	}
 
-	if err := transation.Preload("Person").Find(&users).Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Preload("Person").Find(&users).Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed Find Person data"})
 		return
 	}
 
-	if err := transation.Commit().Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Commit().Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to commit transaction"})
 		return
@@ -139,16 +139,16 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	transation := config.Db.Begin()
+	transaction := config.Db.Begin()
 
-	if transation.Error != nil {
+	if transaction.Error != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to start transaction"})
 		return
 	}
 
-	if err := transation.Preload("Person").First(&user, userRequest.ID).Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Preload("Person").First(&user, userRequest.ID).Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
 		return
@@ -178,25 +178,25 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		user.Person.TNumber = userRequest.UpdateUser.Person.TNumber
 	}
 
-	//err := transation.Model(&OldUser.Person).Updates(newUser.Person).Error; err != nil
+	//err := transaction.Model(&OldUser.Person).Updates(newUser.Person).Error; err != nil
 
-	if err := transation.Save(&user.Person).Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Save(&user.Person).Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to update person data"})
 		return
 	}
 
-	// err := transation.Model(&OldUser).Updates(newUser).Error; err != nil
-	if err := transation.Save(&user).Error; err != nil {
-		transation.Rollback()
+	// err := transaction.Model(&OldUser).Updates(newUser).Error; err != nil
+	if err := transaction.Save(&user).Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to update user data"})
 		return
 	}
 
-	if err := transation.Commit().Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Commit().Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to commit transaction"})
 		return
@@ -219,45 +219,45 @@ func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	transation := config.Db.Begin()
+	transaction := config.Db.Begin()
 
-	if err := transation.Error; err != nil {
+	if err := transaction.Error; err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to start transaction"})
 		return
 	}
-	//err := transation.Preload("Person").First(&user, userRequest.ID).Error; err != ni
-	if err := transation.Preload("Person").First(&user, request.ID).Error; err != nil {
-		transation.Rollback()
+	//err := transaction.Preload("Person").First(&user, userRequest.ID).Error; err != ni
+	if err := transaction.Preload("Person").First(&user, request.ID).Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed Find Person data"})
 		return
 	}
 
 	var dummyUser models.User
-	if err := transation.Where("email = ?", "default@example.com").First(&dummyUser).Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Where("email = ?", "default@example.com").First(&dummyUser).Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find dummy user"})
 		return
 	}
 
-	if err := transation.Model(&models.Request{}).Where("user_id = ?", user.ID).Update("user_id", dummyUser.ID).Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Model(&models.Request{}).Where("user_id = ?", user.ID).Update("user_id", dummyUser.ID).Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to update requests"})
 		return
 	}
 
-	if err := transation.Delete(&models.User{}, request.ID).Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Delete(&models.User{}, request.ID).Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
 		return
 	}
 
-	if err := transation.Commit().Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Commit().Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to commit transaction"})
 		return
