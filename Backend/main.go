@@ -80,13 +80,13 @@ func main() {
 	domesticApp.HandleFunc("/request/update/setFalse", routes.SetFalseRequestState)
 
 
-	//////////////////////////////////////////////////////////////////////// Request Bills
+	//////////////////////////////////////////////////////////////////////// Bills Routes
 	domesticApp.HandleFunc("/bills/create",routes.CreateBill).Methods("POST")
 	domesticApp.HandleFunc("/bills/search", routes.GetBillsHandler).Methods("GET")
 	domesticApp.HandleFunc("/bills/search/{id}", routes.GetBillHandler).Methods("GET")
 	domesticApp.HandleFunc("/bills/update", routes.UpdateBill).Methods("PUT")
 
-	//////////////////////////////////////////////////////////////////////// Request Payments
+	//////////////////////////////////////////////////////////////////////// Payments Routes
 	domesticApp.HandleFunc("/payments/create",routes.CreatePaymentHandler).Methods("POST")
 	domesticApp.HandleFunc("/payments/search/{id}", routes.GetPaymentHandler).Methods("GET")
 	domesticApp.HandleFunc("/payments/update/TP", routes.UpdateTotalPayment).Methods("PUT")
@@ -94,11 +94,17 @@ func main() {
 	domesticApp.HandleFunc("/payments/update/setTransferencia", routes.SetPaymentMethodTransferencia)
 	domesticApp.HandleFunc("/payments/update/setEfectivo", routes.SetPaymentMethodEfectivo)
 
-	//////////////////////////////////////////////////////////////////////// Request Punctuations
+	//////////////////////////////////////////////////////////////////////// Punctuations Routes
 	domesticApp.HandleFunc("/punctuation/create",routes.CreatePunctuationHandler).Methods("POST")
 	domesticApp.HandleFunc("/punctuation/search/{id}", routes.GetPunctuationHandler).Methods("GET")
 	domesticApp.HandleFunc("/punctuation/update/GS", routes.UpdateGeneralScoreHandler).Methods("PUT")
 	domesticApp.HandleFunc("/punctuation/delete", routes.DeletePunctuationHandler).Methods("DELETE")
+
+	//////////////////////////////////////////////////////////////////////// Punctuation Types Routes
+	domesticApp.HandleFunc("/punctuationt/create", routes.CreatePunctuationType).Methods("POST")
+	domesticApp.HandleFunc("/punctuationt/search/{id}", routes.GetPunctuationTypeHandler).Methods("GET")
+	domesticApp.HandleFunc("/punctuationt/update", routes.UpdatePunctuationType).Methods("PUT")
+	domesticApp.HandleFunc("/punctuationt/delete", routes.DeletePunctuationTypeHandler).Methods("DELETE")
 
 
 	http.ListenAndServe(":3000", domesticApp)
