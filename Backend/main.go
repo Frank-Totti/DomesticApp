@@ -94,6 +94,12 @@ func main() {
 	domesticApp.HandleFunc("/payments/update/setTransferencia", routes.SetPaymentMethodTransferencia)
 	domesticApp.HandleFunc("/payments/update/setEfectivo", routes.SetPaymentMethodEfectivo)
 
+	//////////////////////////////////////////////////////////////////////// Request Punctuations
+	domesticApp.HandleFunc("/punctuation/create",routes.CreatePunctuationHandler).Methods("POST")
+	domesticApp.HandleFunc("/punctuation/search/{id}", routes.GetPunctuationHandler).Methods("GET")
+	domesticApp.HandleFunc("/punctuation/update/GS", routes.UpdateGeneralScoreHandler).Methods("PUT")
+	domesticApp.HandleFunc("/punctuation/delete", routes.DeletePunctuationHandler).Methods("DELETE")
+
 
 	http.ListenAndServe(":3000", domesticApp)
 
