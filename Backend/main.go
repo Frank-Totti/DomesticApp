@@ -95,7 +95,12 @@ func main() {
 	domesticApp.HandleFunc("/users/search/last_name", routes.GetUserHandlerByLastName).Methods("GET")
 =======
 	domesticApp.HandleFunc("/users/request", routes.GetRequests).Methods("GET")
+<<<<<<< HEAD
 >>>>>>> 75b4821 (repair of delete functions)
+=======
+	domesticApp.HandleFunc("/users/search/name", routes.GetUserHandlerByName).Methods("GET")
+	domesticApp.HandleFunc("/users/search/last_name", routes.GetUserHandlerByLastName).Methods("GET")
+>>>>>>> d005a5d (Adding routes in users to search by name and last_name (need to repair the default user appers))
 
 	//////////////////////////////////////////////////////////////////////// Services Routes
 	// Añadir para buscar por nombre de servicio o tipo de servicio

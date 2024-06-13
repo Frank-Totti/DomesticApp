@@ -175,7 +175,7 @@ func GetUserHandlerByEmail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := transation.Preload("Person").Table("User").Where("email = ?", request.Email).First(&user).Error; err != nil {
+	if err := transation.Preload("Person").Where("email = ?", request.Email).First(&user).Error; err != nil {
 		transation.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
@@ -191,6 +191,89 @@ func GetUserHandlerByEmail(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(&user)
+
+}
+
+func GetUserHandlerByName(w http.ResponseWriter, r *http.Request) {
+	var users []models.User
+
+	var request forms.UserSearchName
+
+	err := json.NewDecoder(r.Body).Decode(&request) // get the request data in the client
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid request payload"})
+		return
+	}
+
+	transation := config.Db.Begin()
+
+	if err := transation.Error; err != nil {
+		transation.Rollback()
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to start transaction"})
+		return
+	}
+
+	if err := transation.Preload("Person").Table("duser").Joins("JOIN person ON duser.ID = person.owner_id").
+		Where("person.name LIKE ? AND person.email != ?", request.Name+"%", "defaultUser@example.com").Find(&users).Error; err != nil {
+		transation.Rollback()
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
+		return
+	}
+
+	if err := transation.Commit().Error; err != nil {
+		transation.Rollback()
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to commit transaction"})
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(&users)
+
+}
+
+func GetUserHandlerByLastName(w http.ResponseWriter, r *http.Request) {
+	var users []models.User
+
+	var request forms.UserSearchLastName
+
+	err := json.NewDecoder(r.Body).Decode(&request) // get the request data in the client
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid request payload"})
+		return
+	}
+
+	transation := config.Db.Begin()
+
+	if err := transation.Error; err != nil {
+		transation.Rollback()
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to start transaction"})
+		return
+	}
+
+	if err := transation.Debug().Preload("Person").Table("duser").Joins("JOIN person ON duser.ID = person.owner_id").Where("person.last_name LIKE ? AND person.email != ?", request.LastName+"%", "defaultUser@example.com").Find(&users).Error; err != nil {
+		transation.Rollback()
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
+		return
+	}
+
+	if err := transation.Commit().Error; err != nil {
+		transation.Rollback()
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to commit transaction"})
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(&users)
 
 }
 
