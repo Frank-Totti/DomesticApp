@@ -431,10 +431,6 @@ func DeleteProffesioanlHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 75b4821 (repair of delete functions)
 	if err := transation.Unscoped().Delete(&professional.Person).Error; err != nil {
 		transation.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
@@ -443,18 +439,9 @@ func DeleteProffesioanlHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := transation.Unscoped().Delete(&professional).Error; err != nil {
-<<<<<<< HEAD
 		transation.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find professional"})
-=======
-	if err := config.Db.Delete(&models.Professional{}, request.ID).Error; err != nil {
-=======
->>>>>>> 75b4821 (repair of delete functions)
-		transation.Rollback()
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find professional"})
->>>>>>> d5680f8 (partial actualization)
 		return
 	}
 
@@ -480,29 +467,9 @@ func GetGeneralPunctuationProfessionals(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 	if err := transaction.Preload("Person").Table("professional"). //Select("professional.*").
 		//Joins("JOIN professional ON person.owner_id = professional.id").
 		Joins("JOIN request ON professional.ID = request.Professional_ID ").
-=======
-	/*
-		transaction.Table("people").Select("people.Name,people.Last_Name").
-			Joins("JOIN professionals ON people.owner_id = professionals.id").
-			Joins("JOIN requests ON people.P_ID = requests.professional_id").
-			Joins("JOIN punctuations ON requests.R_ID = punctuations.R_ID").
-			Order("punctuations.general_score DESC")
-	*/
-
-	if err := transaction.Table("person").Select("person.Name, person.Last_Name").
-		Joins("JOIN professional ON person.owner_id = professional.id").
-		Joins("JOIN request ON person.PID = request.Professional_ID ").
->>>>>>> d5680f8 (partial actualization)
-=======
-	if err := transaction.Preload("Person").Table("professional"). //Select("professional.*").
-		//Joins("JOIN professional ON person.owner_id = professional.id").
-		Joins("JOIN request ON professional.ID = request.Professional_ID ").
->>>>>>> 76553de (repair of users/request route)
 		Joins("JOIN punctuation ON request.RID = punctuation.RID").
 		Order("punctuation.general_score DESC").
 		Find(&professionals).Error; err != nil {
@@ -546,32 +513,8 @@ func GetParticularPunctuationProfessional(w http.ResponseWriter, r *http.Request
 		return
 	}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
 	if err := transaction.Preload("person").Table("professional").
 		//Joins("JOIN professional ON person.owner_id = professional.id").
-=======
-	/*
-
-		transaction.Table("people").Select("people.Name, people.Last_Name").
-			Joins("JOIN professionals ON people.owner_id = professionals.id").
-			Joins("JOIN requests ON people.P_ID = requests.professional_id").
-			Joins("JOIN punctuations ON requests.R_ID = punctuations.R_ID").
-			Joins("JOIN punctuation_types ON punctuations.sp_id = punctuation_types.sp_id").
-			Order("punctuation_types." + request.Punctuation + " DESC").
-			Find(&professionals)
-	*/
-
-=======
->>>>>>> 75b4821 (repair of delete functions)
-	if err := transaction.Table("person").Select("person.name, person.last_name").
-		Joins("JOIN professional ON person.owner_id = professional.id").
->>>>>>> d5680f8 (partial actualization)
-=======
-	if err := transaction.Preload("person").Table("professional").
-		//Joins("JOIN professional ON person.owner_id = professional.id").
->>>>>>> 76553de (repair of users/request route)
 		Joins("JOIN request ON professional.id = request.professional_id ").
 		Joins("JOIN punctuation ON request.rid = punctuation.rid").
 		Joins("JOIN punctuation_type ON punctuation.spid = punctuation_type.spid").
@@ -601,14 +544,7 @@ func GetProfessionalRequests(w http.ResponseWriter, r *http.Request) {
 	var totalRequestDone int
 	var profesionalRequestDone []models.Payment
 	var response forms.ProfessionalWriterHistory
-<<<<<<< HEAD
-<<<<<<< HEAD
 	var proveProfessional models.Professional
-=======
->>>>>>> 4f6aa2b (just for prove)
-=======
-	var proveProfessional models.Professional
->>>>>>> b1c0de9 (proves completed)
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -624,31 +560,11 @@ func GetProfessionalRequests(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> b1c0de9 (proves completed)
 	if err := transaction.Table("professional").Where("professional.id = ?", request.ID).First(&proveProfessional).Error; err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
 		return
 	}
-<<<<<<< HEAD
-=======
-	/*
-		transaction.
-			Preload("Bill.Request.Professional.Person").Preload("Bill.Request.User.Person").
-			Preload("Bill.Request.Professional").Preload("Bill.Request.User").
-			Preload("Bill.Request.Service").Preload("Bill").
-			Select("payment.*").
-			Joins("JOIN bill ON bill.bid = payment.bid").
-			Joins("JOIN request ON request.rid = bill.rid").
-			Joins("JOIN professional ON professional.id = request.professional_id").
-			Where("professional.id = ? ", request.ID).Find(&profesionalRequestDone)
-	*/
->>>>>>> 4f6aa2b (just for prove)
-=======
->>>>>>> b1c0de9 (proves completed)
 
 	if err := transaction.
 		Preload("Bill.Request.Professional.Person").

@@ -89,21 +89,9 @@ func main() {
 	domesticApp.HandleFunc("/users/create", routes.CreateUserHandler).Methods("POST")   // create a user
 	domesticApp.HandleFunc("/users/update", routes.UpdateUserHandler).Methods("PUT")    // update a user
 	domesticApp.HandleFunc("/users/delete", routes.DeleteUserHandler).Methods("DELETE") // delete a user
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 4f6aa2b (just for prove)
 	domesticApp.HandleFunc("/users/request", routes.GetUserRequests).Methods("GET")
 	domesticApp.HandleFunc("/users/search/name", routes.GetUserHandlerByName).Methods("GET")
 	domesticApp.HandleFunc("/users/search/last_name", routes.GetUserHandlerByLastName).Methods("GET")
-=======
-	domesticApp.HandleFunc("/users/request", routes.GetRequests).Methods("GET")
-<<<<<<< HEAD
->>>>>>> 75b4821 (repair of delete functions)
-=======
-	domesticApp.HandleFunc("/users/search/name", routes.GetUserHandlerByName).Methods("GET")
-	domesticApp.HandleFunc("/users/search/last_name", routes.GetUserHandlerByLastName).Methods("GET")
->>>>>>> d005a5d (Adding routes in users to search by name and last_name (need to repair the default user appers))
 
 	//////////////////////////////////////////////////////////////////////// Services Routes
 	// Añadir para buscar por nombre de servicio o tipo de servicio
@@ -113,14 +101,7 @@ func main() {
 	domesticApp.HandleFunc("/services/update/TD", routes.UpdateTypeDescriptionService).Methods("PUT") // TD = Type or Description
 	domesticApp.HandleFunc("/services/update/setTrue", routes.SetTrueServiceState).Methods("PUT")
 	domesticApp.HandleFunc("/services/update/setFalse", routes.SetFalseServiceState).Methods("PUT")
-<<<<<<< HEAD
-<<<<<<< HEAD
 	domesticApp.HandleFunc("/services/search/type", routes.GetServiceByName).Methods("GET")
-=======
->>>>>>> 6115b9b (Creation of search email users function)
-=======
-	domesticApp.HandleFunc("/services/search/type", routes.GetServiceByName).Methods("GET")
->>>>>>> 4f6aa2b (just for prove)
 
 	/////////////////////////////////////////////////////////////////////// Professional Routes
 	// Añadir para buscar por nombre, por apellido y por correo electronico
@@ -135,7 +116,6 @@ func main() {
 	domesticApp.HandleFunc("/professional/search/name", routes.GetProfessionalHandlerByName).Methods("GET")
 	domesticApp.HandleFunc("/professional/search/last_name", routes.GetProfessionalHandlerByLastName).Methods("GET")
 	domesticApp.HandleFunc("/professional/request", routes.GetProfessionalRequests).Methods("GET")
-<<<<<<< HEAD
 
 	/////////////////////////////////////////////////////////////////////// Professional_offer
 
@@ -172,46 +152,6 @@ func main() {
 	domesticApp.HandleFunc("/punctuationt/search/{id}", routes.GetPunctuationTypeHandler).Methods("GET")
 	domesticApp.HandleFunc("/punctuationt/update", routes.UpdatePunctuationType).Methods("PUT")
 	domesticApp.HandleFunc("/punctuationt/delete", routes.DeletePunctuationTypeHandler).Methods("DELETE")
-=======
->>>>>>> 4f6aa2b (just for prove)
-
-	/////////////////////////////////////////////////////////////////////// Professional_offer
-
-	//////////////////////////////////////////////////////////////////////// Request Routes
-	domesticApp.HandleFunc("/requests/create",routes.CreateRequest).Methods("POST")
-	domesticApp.HandleFunc("/request/search/true", routes.GetActiveRequests).Methods("GET")
-	domesticApp.HandleFunc("/request/search/false", routes.GetNotActiveRequests).Methods("GET")
-	domesticApp.HandleFunc("/request/update/TH", routes.UpdateTravelHour).Methods("PUT")
-	domesticApp.HandleFunc("/request/update/setTrue", routes.SetTrueRequestState)
-	domesticApp.HandleFunc("/request/update/setFalse", routes.SetFalseRequestState)
-
-
-	//////////////////////////////////////////////////////////////////////// Bills Routes
-	domesticApp.HandleFunc("/bills/create",routes.CreateBill).Methods("POST")
-	domesticApp.HandleFunc("/bills/search", routes.GetBillsHandler).Methods("GET")
-	domesticApp.HandleFunc("/bills/search/{id}", routes.GetBillHandler).Methods("GET")
-	domesticApp.HandleFunc("/bills/update", routes.UpdateBill).Methods("PUT")
-
-	//////////////////////////////////////////////////////////////////////// Payments Routes
-	domesticApp.HandleFunc("/payments/create",routes.CreatePaymentHandler).Methods("POST")
-	domesticApp.HandleFunc("/payments/search/{id}", routes.GetPaymentHandler).Methods("GET")
-	domesticApp.HandleFunc("/payments/update/TP", routes.UpdateTotalPayment).Methods("PUT")
-	domesticApp.HandleFunc("/payments/update/setNequi", routes.SetPaymentMethodNequi)
-	domesticApp.HandleFunc("/payments/update/setTransferencia", routes.SetPaymentMethodTransferencia)
-	domesticApp.HandleFunc("/payments/update/setEfectivo", routes.SetPaymentMethodEfectivo)
-
-	//////////////////////////////////////////////////////////////////////// Punctuations Routes
-	domesticApp.HandleFunc("/punctuation/create",routes.CreatePunctuationHandler).Methods("POST")
-	domesticApp.HandleFunc("/punctuation/search/{id}", routes.GetPunctuationHandler).Methods("GET")
-	domesticApp.HandleFunc("/punctuation/update/GS", routes.UpdateGeneralScoreHandler).Methods("PUT")
-	domesticApp.HandleFunc("/punctuation/delete", routes.DeletePunctuationHandler).Methods("DELETE")
-
-	//////////////////////////////////////////////////////////////////////// Punctuation Types Routes
-	domesticApp.HandleFunc("/punctuationt/create", routes.CreatePunctuationType).Methods("POST")
-	domesticApp.HandleFunc("/punctuationt/search/{id}", routes.GetPunctuationTypeHandler).Methods("GET")
-	domesticApp.HandleFunc("/punctuationt/update", routes.UpdatePunctuationType).Methods("PUT")
-	domesticApp.HandleFunc("/punctuationt/delete", routes.DeletePunctuationTypeHandler).Methods("DELETE")
-
 
 	http.ListenAndServe(":3000", domesticApp)
 

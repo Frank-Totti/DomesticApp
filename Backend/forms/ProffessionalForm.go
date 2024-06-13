@@ -1,6 +1,4 @@
 package forms
-<<<<<<< HEAD
-=======
 
 import (
 	"time"
@@ -33,9 +31,6 @@ type InnerProfesional struct {
 type ParticularPunctuation struct {
 	Punctuation string `json:"punctuation"`
 }
-<<<<<<< HEAD
->>>>>>> 76553de (repair of users/request route)
-=======
 
 type ProfessionalWriterHistory struct {
 	ProfessionalID uint             `json:"id"`
@@ -46,4 +41,3 @@ type ProfessionalWriterHistory struct {
 type ProfessionalRequestHistory struct {
 	ID uint `json:"id"`
 }
->>>>>>> 4f6aa2b (just for prove)

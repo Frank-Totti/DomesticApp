@@ -27,15 +27,7 @@ type UserResponseGetRequest struct {
 type UserWriterHistory struct {
 	UserID         uint             `json:"id"`
 	Total          int              `json:"total"`
-<<<<<<< HEAD
-<<<<<<< HEAD
 	RequestHistory []models.Payment `json:"history"`
-=======
-	RequestHistory []models.Request `json:"history"`
->>>>>>> 76553de (repair of users/request route)
-=======
-	RequestHistory []models.Payment `json:"history"`
->>>>>>> 6115b9b (Creation of search email users function)
 }
 
 type UserRequestHistory struct {

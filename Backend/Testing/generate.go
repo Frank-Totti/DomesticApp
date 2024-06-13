@@ -1,32 +1,13 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 package Testing
 
 import (
 	"fmt"
 	"log"
-=======
-package testing
-
-import (
-	"fmt"
->>>>>>> 76553de (repair of users/request route)
-=======
-package Testing
-
-import (
-	"fmt"
-	"log"
->>>>>>> 6115b9b (Creation of search email users function)
 	"math/rand"
 	"time"
 
 	"github.com/Frank-totti/DomesticApp/config"
 	"github.com/Frank-totti/DomesticApp/models"
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 6115b9b (Creation of search email users function)
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
@@ -41,14 +22,6 @@ func CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
-<<<<<<< HEAD
-=======
-	"gorm.io/gorm"
-)
-
->>>>>>> 76553de (repair of users/request route)
-=======
->>>>>>> 6115b9b (Creation of search email users function)
 func GenerateRandomBytes(length int) []byte {
 	const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	seededRand := rand.New(rand.NewSource(time.Now().UnixNano()))
@@ -62,34 +35,17 @@ func GenerateRandomBytes(length int) []byte {
 // Funciones de inserción para cada tabla
 func InsertUsers(db *gorm.DB) {
 	for i := 0; i < 50; i++ {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 6115b9b (Creation of search email users function)
 		crypt_password, err := HashPassword(fmt.Sprintf("Contraseña %d", i+1))
 		if err != nil {
 			log.Fatal("Imposible to Hash Password")
 			return
 		}
-<<<<<<< HEAD
-=======
->>>>>>> 76553de (repair of users/request route)
-=======
->>>>>>> 6115b9b (Creation of search email users function)
 		person := models.Person{
 			Address:  fmt.Sprintf("Dirección %d", i+1),
 			Name:     fmt.Sprintf("Nombre %d", i+1),
 			LastName: fmt.Sprintf("Apellido %d", i+1),
 			TNumber:  fmt.Sprintf("Número %012d", i+1),
-<<<<<<< HEAD
-<<<<<<< HEAD
 			Password: crypt_password,
-=======
-			Password: fmt.Sprintf("Contraseña %d", i+1),
->>>>>>> 76553de (repair of users/request route)
-=======
-			Password: crypt_password,
->>>>>>> 6115b9b (Creation of search email users function)
 			Email:    fmt.Sprintf("email%d@example.com", i+1),
 		}
 		user := models.User{PublicService: GenerateRandomBytes(16), Person: person}
