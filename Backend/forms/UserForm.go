@@ -1,5 +1,6 @@
 package forms
 
+<<<<<<< HEAD
 import (
 	"time"
 
@@ -34,6 +35,8 @@ type UserRequestHistory struct {
 	ID uint `json:"id"`
 }
 
+=======
+>>>>>>> d5680f8 (partial actualization)
 type UserDelete struct {
 	ID uint `json:"id"`
 }

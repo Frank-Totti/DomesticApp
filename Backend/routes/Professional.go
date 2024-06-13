@@ -431,6 +431,7 @@ func DeleteProffesioanlHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+<<<<<<< HEAD
 	if err := transation.Unscoped().Delete(&professional.Person).Error; err != nil {
 		transation.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
@@ -442,6 +443,12 @@ func DeleteProffesioanlHandler(w http.ResponseWriter, r *http.Request) {
 		transation.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find professional"})
+=======
+	if err := config.Db.Delete(&models.Professional{}, request.ID).Error; err != nil {
+		transation.Rollback()
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find professional"})
+>>>>>>> d5680f8 (partial actualization)
 		return
 	}
 
@@ -467,9 +474,23 @@ func GetGeneralPunctuationProfessionals(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+<<<<<<< HEAD
 	if err := transaction.Preload("Person").Table("professional"). //Select("professional.*").
 		//Joins("JOIN professional ON person.owner_id = professional.id").
 		Joins("JOIN request ON professional.ID = request.Professional_ID ").
+=======
+	/*
+		transaction.Table("people").Select("people.Name,people.Last_Name").
+			Joins("JOIN professionals ON people.owner_id = professionals.id").
+			Joins("JOIN requests ON people.P_ID = requests.professional_id").
+			Joins("JOIN punctuations ON requests.R_ID = punctuations.R_ID").
+			Order("punctuations.general_score DESC")
+	*/
+
+	if err := transaction.Table("person").Select("person.Name, person.Last_Name").
+		Joins("JOIN professional ON person.owner_id = professional.id").
+		Joins("JOIN request ON person.PID = request.Professional_ID ").
+>>>>>>> d5680f8 (partial actualization)
 		Joins("JOIN punctuation ON request.RID = punctuation.RID").
 		Order("punctuation.general_score DESC").
 		Find(&professionals).Error; err != nil {
@@ -513,8 +534,24 @@ func GetParticularPunctuationProfessional(w http.ResponseWriter, r *http.Request
 		return
 	}
 
+<<<<<<< HEAD
 	if err := transaction.Preload("person").Table("professional").
 		//Joins("JOIN professional ON person.owner_id = professional.id").
+=======
+	/*
+
+		transaction.Table("people").Select("people.Name, people.Last_Name").
+			Joins("JOIN professionals ON people.owner_id = professionals.id").
+			Joins("JOIN requests ON people.P_ID = requests.professional_id").
+			Joins("JOIN punctuations ON requests.R_ID = punctuations.R_ID").
+			Joins("JOIN punctuation_types ON punctuations.sp_id = punctuation_types.sp_id").
+			Order("punctuation_types." + request.Punctuation + " DESC").
+			Find(&professionals)
+	*/
+
+	if err := transaction.Table("person").Select("person.name, person.last_name").
+		Joins("JOIN professional ON person.owner_id = professional.id").
+>>>>>>> d5680f8 (partial actualization)
 		Joins("JOIN request ON professional.id = request.professional_id ").
 		Joins("JOIN punctuation ON request.rid = punctuation.rid").
 		Joins("JOIN punctuation_type ON punctuation.spid = punctuation_type.spid").
