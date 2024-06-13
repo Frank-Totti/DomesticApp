@@ -80,6 +80,7 @@ func GetUserHandlerById(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
 
 	transaction := config.Db.Begin()
+<<<<<<< HEAD
 
 	if err := transaction.Error; err != nil {
 		transaction.Rollback()
@@ -121,25 +122,32 @@ func GetUserHandlerByEmail(w http.ResponseWriter, r *http.Request) {
 	}
 
 	transation := config.Db.Begin()
+=======
+>>>>>>> 919c736 (pull of backend changes)
 
-	if err := transation.Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to start transaction"})
 		return
 	}
 
+<<<<<<< HEAD
 	if err := transation.Preload("Person").Table("duser").
 		Joins("JOIN person ON person.owner_id = duser.ID AND person.owner_type = 'duser'").
 		Where("person.email = ?", request.Email).First(&user).Error; err != nil {
 		transation.Rollback()
+=======
+	if err := transaction.Preload("Person").First(&user, params["id"]).Error; err != nil {
+		transaction.Rollback()
+>>>>>>> 919c736 (pull of backend changes)
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
 		return
 	}
 
-	if err := transation.Commit().Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Commit().Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to commit transaction"})
 		return
@@ -291,6 +299,7 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 >>>>>>> 6115b9b (Creation of search email users function)
 	var users []models.User
 
+<<<<<<< HEAD
 	var request forms.SearchName
 
 	err := json.NewDecoder(r.Body).Decode(&request) // get the request data in the client
@@ -305,20 +314,30 @@ func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
 
 	if err := transation.Error; err != nil {
 		transation.Rollback()
+=======
+	transaction := config.Db.Begin()
+
+	if transaction.Error != nil {
+>>>>>>> 919c736 (pull of backend changes)
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to start transaction"})
 		return
 	}
 
+<<<<<<< HEAD
 	if err := transation.Preload("Person").Table("duser").Joins("JOIN person ON duser.ID = person.owner_id AND person.owner_type = 'duser'").Where("TRIM(person.name) LIKE ? AND person.email <> 'defaultUser@example.com'", request.Name+"%").Find(&users).Error; err != nil {
 		transation.Rollback()
+=======
+	if err := transaction.Preload("Person").Find(&users).Error; err != nil {
+		transaction.Rollback()
+>>>>>>> 919c736 (pull of backend changes)
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
 		return
 	}
 
-	if err := transation.Commit().Error; err != nil {
-		transation.Rollback()
+	if err := transaction.Commit().Error; err != nil {
+		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to commit transaction"})
 		return
@@ -475,6 +494,11 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		user.Person.TNumber = userRequest.UpdateUser.Person.TNumber
 	}
 
+<<<<<<< HEAD
+=======
+	//err := transaction.Model(&OldUser.Person).Updates(newUser.Person).Error; err != nil
+
+>>>>>>> 919c736 (pull of backend changes)
 	if err := transaction.Save(&user.Person).Error; err != nil {
 		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
@@ -482,6 +506,10 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+<<<<<<< HEAD
+=======
+	// err := transaction.Model(&OldUser).Updates(newUser).Error; err != nil
+>>>>>>> 919c736 (pull of backend changes)
 	if err := transaction.Save(&user).Error; err != nil {
 		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
@@ -511,64 +539,61 @@ func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Start a transaction
-	tx := config.Db.Begin()
-	if tx.Error != nil {
+	transation := config.Db.Begin()
+
+	if err := transation.Error; err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to start transaction"})
 		return
 	}
-
-	// Find the user and preload the Person relation
-	if err := tx.Preload("Person").First(&user, request.ID).Error; err != nil {
-		tx.Rollback()
-		w.WriteHeader(http.StatusNotFound) // Use 404 Not Found for missing records
-		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
+	//err := transation.Preload("Person").First(&user, userRequest.ID).Error; err != ni
+	if err := transation.Preload("Person").First(&user, request.ID).Error; err != nil {
+		transation.Rollback()
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed Find Person data"})
 		return
 	}
 
 	// Find the dummy user for reassignment
 	var dummyUser models.User
-	if err := tx.Table("person").Where("email = ?", "defaultUser@example.com").First(&dummyUser).Error; err != nil {
-		tx.Rollback()
+	if err := transation.Table("person").Where("email = ?", "defaultUser@example.com").First(&dummyUser).Error; err != nil {
+		transation.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find dummy user"})
 		return
 	}
 
-	// Update requests associated with the user to use the dummy user
-	if err := tx.Model(&models.Request{}).Where("user_id = ?", user.ID).Update("user_id", dummyUser.ID).Error; err != nil {
-		tx.Rollback()
+	if err := transation.Model(&models.Request{}).Where("user_id = ?", user.ID).Update("user_id", dummyUser.ID).Error; err != nil {
+		transation.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to update requests"})
 		return
 	}
 
-	// Delete the user
-	if err := tx.Unscoped().Delete(&user.Person).Error; err != nil {
-		tx.Rollback()
+	if err := transation.Unscoped().Delete(&user.Person).Error; err != nil {
+		transation.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to delete user"})
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
 		return
 	}
 
-	if err := tx.Unscoped().Delete(&user).Error; err != nil {
-		tx.Rollback()
+	if err := transation.Unscoped().Delete(&user).Error; err != nil {
+		transation.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to delete user"})
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
 		return
 	}
 
-	// Commit the transaction
-	if err := tx.Commit().Error; err != nil {
-		tx.Rollback()
+	if err := transation.Commit().Error; err != nil {
+		transation.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to commit transaction"})
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"success": "User deleted successfully"})
+	json.NewEncoder(w).Encode(&user)
+
 }
 
 func GetUserRequests(w http.ResponseWriter, r *http.Request) {
@@ -579,6 +604,7 @@ func GetUserRequests(w http.ResponseWriter, r *http.Request) {
 <<<<<<< HEAD
 	var userRequestDone []models.Payment
 	var response forms.UserWriterHistory
+<<<<<<< HEAD
 	var proveUser models.User
 <<<<<<< HEAD
 =======
@@ -590,6 +616,9 @@ func GetUserRequests(w http.ResponseWriter, r *http.Request) {
 >>>>>>> 76553de (repair of users/request route)
 =======
 >>>>>>> b1c0de9 (proves completed)
+=======
+	var proveUser models.Professional
+>>>>>>> 919c736 (pull of backend changes)
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -626,7 +655,7 @@ func GetUserRequests(w http.ResponseWriter, r *http.Request) {
 		Joins("JOIN bill ON bill.bid = payment.bid").
 		Joins("JOIN request ON request.rid = bill.rid").
 		Joins("JOIN duser ON duser.id = request.user_id").
-		Where("duser.id = ? ", request.ID).
+		Where("professional.id = ? ", request.ID).
 		Find(&userRequestDone).
 =======
 	if err := transaction.Preload("User.Person").Preload("Professional.Person").Preload("User").Preload("Professional").Preload("Service").Select("request.*").
@@ -652,7 +681,7 @@ func GetUserRequests(w http.ResponseWriter, r *http.Request) {
 		Error; err != nil {
 		transaction.Rollback()
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to get users"})
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to get professionals"})
 		return
 	}
 
@@ -671,8 +700,6 @@ func GetUserRequests(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(&response)
-
-	//if err :=
 }
 
 /* CREATE
