@@ -150,7 +150,53 @@ func GetUserHandlerByEmail(w http.ResponseWriter, r *http.Request) {
 
 }
 
+<<<<<<< HEAD
 func GetUserHandlerByName(w http.ResponseWriter, r *http.Request) {
+=======
+func GetUserHandlerByEmail(w http.ResponseWriter, r *http.Request) {
+	var user models.User
+
+	var request forms.UserSearchEmail
+
+	err := json.NewDecoder(r.Body).Decode(&request) // get the request data in the client
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid request payload"})
+		return
+	}
+
+	transation := config.Db.Begin()
+
+	if err := transation.Error; err != nil {
+		transation.Rollback()
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to start transaction"})
+		return
+	}
+
+	if err := transation.Preload("Person").Table("User").Where("email = ?", request.Email).First(&user).Error; err != nil {
+		transation.Rollback()
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
+		return
+	}
+
+	if err := transation.Commit().Error; err != nil {
+		transation.Rollback()
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to commit transaction"})
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(&user)
+
+}
+
+func GetUsersHandler(w http.ResponseWriter, r *http.Request) {
+
+>>>>>>> 6115b9b (Creation of search email users function)
 	var users []models.User
 
 	var request forms.SearchName
@@ -438,11 +484,15 @@ func GetUserRequests(w http.ResponseWriter, r *http.Request) {
 	var request forms.UserRequestHistory
 	var totalRequestDone int
 <<<<<<< HEAD
+<<<<<<< HEAD
 	var userRequestDone []models.Payment
 	var response forms.UserWriterHistory
 	var proveUser models.User
 =======
 	var userRequestDone []models.Request
+=======
+	var userRequestDone []models.Payment
+>>>>>>> 6115b9b (Creation of search email users function)
 	var response forms.UserWriterHistory
 >>>>>>> 76553de (repair of users/request route)
 
@@ -459,6 +509,7 @@ func GetUserRequests(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to start transaction"})
 		return
 	}
+<<<<<<< HEAD
 <<<<<<< HEAD
 
 	if err := transaction.Table("duser").Where("duser.id = ?", request.ID).First(&proveUser).Error; err != nil {
@@ -481,6 +532,26 @@ func GetUserRequests(w http.ResponseWriter, r *http.Request) {
 		Joins("JOIN person ON person.owner_id = request.user_id").
 		Where("person.owner_id = ? AND person.owner_type = 'duser'", request.ID).Find(&userRequestDone).
 >>>>>>> 76553de (repair of users/request route)
+=======
+
+	/* transaction.Preload("User.Person").Preload("Professional.Person").Preload("User").Preload("Professional").Preload("Service").Select("request.*").
+	Joins("JOIN person ON person.owner_id = request.user_id").
+	Where("person.owner_id = ? AND person.owner_type = 'duser'", request.ID).Find(&userRequestDone)
+
+
+	Select("payment.id,bill.id,request.id,duser.id,payment.total_payment,payment.transferencia,payment.efectivo,payment.nequi,bill.init_work_hour,bill.final_work_hour,bill.final_travel_hour,bill.discounts_applied, bill.partial_payment,request.travel_hour,request.state").
+	*/
+
+	if err := transaction.
+		Preload("Bill.Request.User.Person").Preload("Bill.Request.Professional.Person").
+		Preload("Bill.Request.User").Preload("Bill.Request.Professional").
+		Preload("Bill.Request.Service").Preload("Bill").
+		Select("payment.*").
+		Joins("JOIN bill ON bill.bid = payment.bid").
+		Joins("JOIN request ON request.rid = bill.rid").
+		Joins("JOIN duser ON duser.id = request.user_id").
+		Where("duser.id = ? ", request.ID).Find(&userRequestDone).
+>>>>>>> 6115b9b (Creation of search email users function)
 		Error; err != nil {
 		transaction.Rollback()
 		w.WriteHeader(http.StatusBadRequest)

@@ -105,7 +105,10 @@ func main() {
 	domesticApp.HandleFunc("/services/update/TD", routes.UpdateTypeDescriptionService).Methods("PUT") // TD = Type or Description
 	domesticApp.HandleFunc("/services/update/setTrue", routes.SetTrueServiceState).Methods("PUT")
 	domesticApp.HandleFunc("/services/update/setFalse", routes.SetFalseServiceState).Methods("PUT")
+<<<<<<< HEAD
 	domesticApp.HandleFunc("/services/search/type", routes.GetServiceByName).Methods("GET")
+=======
+>>>>>>> 6115b9b (Creation of search email users function)
 
 	/////////////////////////////////////////////////////////////////////// Professional Routes
 	// Añadir para buscar por nombre, por apellido y por correo electronico
@@ -156,6 +159,8 @@ func main() {
 	domesticApp.HandleFunc("/punctuationt/search/{id}", routes.GetPunctuationTypeHandler).Methods("GET")
 	domesticApp.HandleFunc("/punctuationt/update", routes.UpdatePunctuationType).Methods("PUT")
 	domesticApp.HandleFunc("/punctuationt/delete", routes.DeletePunctuationTypeHandler).Methods("DELETE")
+
+	/////////////////////////////////////////////////////////////////////// Professional_offer
 
 	http.ListenAndServe(":3000", domesticApp)
 
