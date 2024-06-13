@@ -495,10 +495,13 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 	//err := transaction.Model(&OldUser.Person).Updates(newUser.Person).Error; err != nil
 
 >>>>>>> 919c736 (pull of backend changes)
+=======
+>>>>>>> fb4678d (user.go and indirect tools fixed)
 	if err := transaction.Save(&user.Person).Error; err != nil {
 		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
@@ -507,9 +510,12 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 	// err := transaction.Model(&OldUser).Updates(newUser).Error; err != nil
 >>>>>>> 919c736 (pull of backend changes)
+=======
+>>>>>>> fb4678d (user.go and indirect tools fixed)
 	if err := transaction.Save(&user).Error; err != nil {
 		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
@@ -539,61 +545,64 @@ func DeleteUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	transation := config.Db.Begin()
-
-	if err := transation.Error; err != nil {
+	// Start a transaction
+	tx := config.Db.Begin()
+	if tx.Error != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to start transaction"})
 		return
 	}
-	//err := transation.Preload("Person").First(&user, userRequest.ID).Error; err != ni
-	if err := transation.Preload("Person").First(&user, request.ID).Error; err != nil {
-		transation.Rollback()
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Failed Find Person data"})
+
+	// Find the user and preload the Person relation
+	if err := tx.Preload("Person").First(&user, request.ID).Error; err != nil {
+		tx.Rollback()
+		w.WriteHeader(http.StatusNotFound) // Use 404 Not Found for missing records
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
 		return
 	}
 
 	// Find the dummy user for reassignment
 	var dummyUser models.User
-	if err := transation.Table("person").Where("email = ?", "defaultUser@example.com").First(&dummyUser).Error; err != nil {
-		transation.Rollback()
+	if err := tx.Table("person").Where("email = ?", "defaultUser@example.com").First(&dummyUser).Error; err != nil {
+		tx.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find dummy user"})
 		return
 	}
 
-	if err := transation.Model(&models.Request{}).Where("user_id = ?", user.ID).Update("user_id", dummyUser.ID).Error; err != nil {
-		transation.Rollback()
+	// Update requests associated with the user to use the dummy user
+	if err := tx.Model(&models.Request{}).Where("user_id = ?", user.ID).Update("user_id", dummyUser.ID).Error; err != nil {
+		tx.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to update requests"})
 		return
 	}
 
-	if err := transation.Unscoped().Delete(&user.Person).Error; err != nil {
-		transation.Rollback()
+	// Delete the user
+	if err := tx.Unscoped().Delete(&user.Person).Error; err != nil {
+		tx.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to delete user"})
 		return
 	}
 
-	if err := transation.Unscoped().Delete(&user).Error; err != nil {
-		transation.Rollback()
+	if err := tx.Unscoped().Delete(&user).Error; err != nil {
+		tx.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to delete user"})
 		return
 	}
 
-	if err := transation.Commit().Error; err != nil {
-		transation.Rollback()
+	// Commit the transaction
+	if err := tx.Commit().Error; err != nil {
+		tx.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to commit transaction"})
 		return
 	}
 
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(&user)
-
+	json.NewEncoder(w).Encode(map[string]string{"success": "User deleted successfully"})
 }
 
 func GetUserRequests(w http.ResponseWriter, r *http.Request) {
@@ -604,6 +613,7 @@ func GetUserRequests(w http.ResponseWriter, r *http.Request) {
 <<<<<<< HEAD
 	var userRequestDone []models.Payment
 	var response forms.UserWriterHistory
+<<<<<<< HEAD
 <<<<<<< HEAD
 	var proveUser models.User
 <<<<<<< HEAD
@@ -619,6 +629,9 @@ func GetUserRequests(w http.ResponseWriter, r *http.Request) {
 =======
 	var proveUser models.Professional
 >>>>>>> 919c736 (pull of backend changes)
+=======
+	var proveUser models.User
+>>>>>>> fb4678d (user.go and indirect tools fixed)
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -655,7 +668,7 @@ func GetUserRequests(w http.ResponseWriter, r *http.Request) {
 		Joins("JOIN bill ON bill.bid = payment.bid").
 		Joins("JOIN request ON request.rid = bill.rid").
 		Joins("JOIN duser ON duser.id = request.user_id").
-		Where("professional.id = ? ", request.ID).
+		Where("duser.id = ? ", request.ID).
 		Find(&userRequestDone).
 =======
 	if err := transaction.Preload("User.Person").Preload("Professional.Person").Preload("User").Preload("Professional").Preload("Service").Select("request.*").
@@ -681,7 +694,7 @@ func GetUserRequests(w http.ResponseWriter, r *http.Request) {
 		Error; err != nil {
 		transaction.Rollback()
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to get professionals"})
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to get users"})
 		return
 	}
 
@@ -700,6 +713,8 @@ func GetUserRequests(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(&response)
+
+	//if err :=
 }
 
 /* CREATE
