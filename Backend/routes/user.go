@@ -175,7 +175,9 @@ func GetUserHandlerByEmail(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := transation.Preload("Person").Where("email = ?", request.Email).First(&user).Error; err != nil {
+	if err := transation.Preload("Person").Table("duser").
+		Joins("JOIN person ON person.owner_id = duser.ID AND person.owner_type = 'duser'").
+		Where("person.email = ?", request.Email).First(&user).Error; err != nil {
 		transation.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
@@ -216,8 +218,7 @@ func GetUserHandlerByName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := transation.Preload("Person").Table("duser").Joins("JOIN person ON duser.ID = person.owner_id").
-		Where("person.name LIKE ? AND person.email != ?", request.Name+"%", "defaultUser@example.com").Find(&users).Error; err != nil {
+	if err := transation.Preload("Person").Table("duser").Joins("JOIN person ON duser.ID = person.owner_id AND person.owner_type = 'duser'").Where("TRIM(person.name) LIKE ? AND person.email <> 'defaultUser@example.com'", request.Name+"%").Find(&users).Error; err != nil {
 		transation.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
@@ -239,6 +240,8 @@ func GetUserHandlerByName(w http.ResponseWriter, r *http.Request) {
 func GetUserHandlerByLastName(w http.ResponseWriter, r *http.Request) {
 	var users []models.User
 
+	//var personP []models.Person
+
 	var request forms.UserSearchLastName
 
 	err := json.NewDecoder(r.Body).Decode(&request) // get the request data in the client
@@ -258,12 +261,18 @@ func GetUserHandlerByLastName(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := transation.Debug().Preload("Person").Table("duser").Joins("JOIN person ON duser.ID = person.owner_id").Where("person.last_name LIKE ? AND person.email != ?", request.LastName+"%", "defaultUser@example.com").Find(&users).Error; err != nil {
+	if err := transation.Debug().
+		Preload("Person").
+		Table("duser").
+		Joins("JOIN person ON duser.ID = person.owner_id AND person.owner_type = 'duser'").
+		Where("person.email <> 'defaultUser@example.com' AND TRIM(person.last_name) LIKE ?", request.LastName+"%").
+		Find(&users).Error; err != nil {
 		transation.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
 		return
 	}
+	//fmt.Println(users)
 
 	if err := transation.Commit().Error; err != nil {
 		transation.Rollback()
