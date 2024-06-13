@@ -93,8 +93,8 @@ func InsertUsers(db *gorm.DB) {
 			Email:    fmt.Sprintf("email%d@example.com", i+1),
 		}
 		user := models.User{PublicService: GenerateRandomBytes(16), Person: person}
-		db.FirstOrCreate(&user.Person)
-		db.FirstOrCreate(&user)
+		db.Where("email = ?", person.Email).FirstOrCreate(&user.Person)
+		db.Where("id = ?", user.ID).FirstOrCreate(&user)
 	}
 }
 
@@ -109,8 +109,8 @@ func InsertProfessionals(db *gorm.DB) {
 			Email:    fmt.Sprintf("email%d@example.com", i+1),
 		}
 		profesional := models.Professional{Person: person, Birth: time.Now(), IdentifyDocument: fmt.Sprintf("Documento %d", i), PhotoDocument: GenerateRandomBytes(16), ProfilePicture: GenerateRandomBytes(16)}
-		db.FirstOrCreate(&profesional.Person)
-		db.FirstOrCreate(&profesional)
+		db.Where("email = ?", person.Email).FirstOrCreate(&profesional.Person)
+		db.Where("id = ?", profesional.ID).FirstOrCreate(&profesional)
 	}
 }
 
@@ -120,7 +120,7 @@ func InsertServices(db *gorm.DB) {
 			Type:        fmt.Sprintf("Tipo %d", i+1),
 			Description: fmt.Sprintf("Descripción %d", i+1),
 		}
-		db.FirstOrCreate(&service)
+		db.Where("type = ? AND description = ?", service.Type, service.Description).FirstOrCreate(&service)
 	}
 }
 
@@ -148,7 +148,7 @@ func InsertProfessionalOffers(db *gorm.DB) {
 			UnitPrice:                 float64(i + 1),
 			PricePerHour:              float64(i + 1),
 		}
-		db.FirstOrCreate(&professionalOffer)
+		db.Where("sid = ? AND pid = ?", professionalOffer.SID, professionalOffer.PID).FirstOrCreate(&professionalOffer)
 	}
 }
 
@@ -178,7 +178,7 @@ func InsertRequests(db *gorm.DB) {
 			TravelHour:     time.Now(), // Hora de viaje aleatoria
 			State:          fmt.Sprintf("Estado %d", i+1),
 		}
-		db.FirstOrCreate(&request)
+		db.Where("user_id = ? AND professional_id = ? AND sid = ?", request.UserID, request.ProfessionalID, request.SID).FirstOrCreate(&request)
 	}
 }
 
@@ -197,7 +197,7 @@ func InsertBills(db *gorm.DB) {
 			DiscountsApplied: float64(rand.Intn(100)),
 			PartialPayment:   float64(rand.Intn(100)),
 		}
-		db.FirstOrCreate(&bill)
+		db.Where("rid = ?", bill.RID).FirstOrCreate(&bill)
 	}
 }
 
@@ -215,7 +215,7 @@ func InsertPayments(db *gorm.DB) {
 			Transferencia: rand.Float32() < 0.5, // Generar aleatoriamente un valor booleano
 			Efectivo:      rand.Float32() < 0.5, // Generar aleatoriamente un valor booleano
 		}
-		db.FirstOrCreate(&payment)
+		db.Where("bid = ?", payment.BID).FirstOrCreate(&payment)
 	}
 }
 
@@ -229,7 +229,7 @@ func InsertPunctuations(db *gorm.DB) {
 			RID:          request.RID,
 			GeneralScore: rand.Intn(5) + 1, // Generar una calificación aleatoria entre 1 y 5
 		}
-		db.FirstOrCreate(&punctuation)
+		db.Where("rid = ?", punctuation.RID).FirstOrCreate(&punctuation)
 	}
 }
 
@@ -246,7 +246,7 @@ func InsertPunctuationTypes(db *gorm.DB) {
 			TimeWorkPoint:   rand.Intn(5) + 1,
 			QualityPoint:    rand.Intn(5) + 1,
 		}
-		db.FirstOrCreate(&punctuationType)
+		db.Where("spid = ?", punctuationType.SPID).FirstOrCreate(&punctuationType)
 	}
 }
 

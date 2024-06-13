@@ -2,7 +2,11 @@ package forms
 <<<<<<< HEAD
 =======
 
-import "time"
+import (
+	"time"
+
+	"github.com/Frank-totti/DomesticApp/models"
+)
 
 type GetGeneralPunctuationPro struct {
 	Name      string
@@ -29,4 +33,17 @@ type InnerProfesional struct {
 type ParticularPunctuation struct {
 	Punctuation string `json:"punctuation"`
 }
+<<<<<<< HEAD
 >>>>>>> 76553de (repair of users/request route)
+=======
+
+type ProfessionalWriterHistory struct {
+	ProfessionalID uint             `json:"id"`
+	Total          int              `json:"total"`
+	RequestHistory []models.Payment `json:"history"`
+}
+
+type ProfessionalRequestHistory struct {
+	ID uint `json:"id"`
+}
+>>>>>>> 4f6aa2b (just for prove)

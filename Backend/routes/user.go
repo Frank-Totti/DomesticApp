@@ -156,7 +156,7 @@ func GetUserHandlerByName(w http.ResponseWriter, r *http.Request) {
 func GetUserHandlerByEmail(w http.ResponseWriter, r *http.Request) {
 	var user models.User
 
-	var request forms.UserSearchEmail
+	var request forms.SearchEmail
 
 	err := json.NewDecoder(r.Body).Decode(&request) // get the request data in the client
 
@@ -199,7 +199,7 @@ func GetUserHandlerByEmail(w http.ResponseWriter, r *http.Request) {
 func GetUserHandlerByName(w http.ResponseWriter, r *http.Request) {
 	var users []models.User
 
-	var request forms.UserSearchName
+	var request forms.SearchName
 
 	err := json.NewDecoder(r.Body).Decode(&request) // get the request data in the client
 
@@ -242,7 +242,7 @@ func GetUserHandlerByLastName(w http.ResponseWriter, r *http.Request) {
 
 	//var personP []models.Person
 
-	var request forms.UserSearchLastName
+	var request forms.SearchLastName
 
 	err := json.NewDecoder(r.Body).Decode(&request) // get the request data in the client
 
@@ -626,24 +626,20 @@ func GetUserRequests(w http.ResponseWriter, r *http.Request) {
 >>>>>>> 76553de (repair of users/request route)
 =======
 
-	/* transaction.Preload("User.Person").Preload("Professional.Person").Preload("User").Preload("Professional").Preload("Service").Select("request.*").
-	Joins("JOIN person ON person.owner_id = request.user_id").
-	Where("person.owner_id = ? AND person.owner_type = 'duser'", request.ID).Find(&userRequestDone)
-
-
-	Select("payment.id,bill.id,request.id,duser.id,payment.total_payment,payment.transferencia,payment.efectivo,payment.nequi,bill.init_work_hour,bill.final_work_hour,bill.final_travel_hour,bill.discounts_applied, bill.partial_payment,request.travel_hour,request.state").
-	*/
-
 	if err := transaction.
-		Preload("Bill.Request.User.Person").Preload("Bill.Request.Professional.Person").
-		Preload("Bill.Request.User").Preload("Bill.Request.Professional").
-		Preload("Bill.Request.Service").Preload("Bill").
-		Select("payment.*").
+		Preload("Bill.Request.Professional.Person").
+		Preload("Bill.Request.User.Person").
+		Preload("Bill.Request.Service").
 		Joins("JOIN bill ON bill.bid = payment.bid").
 		Joins("JOIN request ON request.rid = bill.rid").
 		Joins("JOIN duser ON duser.id = request.user_id").
+<<<<<<< HEAD
 		Where("duser.id = ? ", request.ID).Find(&userRequestDone).
 >>>>>>> 6115b9b (Creation of search email users function)
+=======
+		Where("duser.id = ? ", request.ID).
+		Find(&userRequestDone).
+>>>>>>> 4f6aa2b (just for prove)
 		Error; err != nil {
 		transaction.Rollback()
 		w.WriteHeader(http.StatusBadRequest)

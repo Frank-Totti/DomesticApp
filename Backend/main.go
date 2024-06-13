@@ -90,6 +90,9 @@ func main() {
 	domesticApp.HandleFunc("/users/update", routes.UpdateUserHandler).Methods("PUT")    // update a user
 	domesticApp.HandleFunc("/users/delete", routes.DeleteUserHandler).Methods("DELETE") // delete a user
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 4f6aa2b (just for prove)
 	domesticApp.HandleFunc("/users/request", routes.GetUserRequests).Methods("GET")
 	domesticApp.HandleFunc("/users/search/name", routes.GetUserHandlerByName).Methods("GET")
 	domesticApp.HandleFunc("/users/search/last_name", routes.GetUserHandlerByLastName).Methods("GET")
@@ -111,9 +114,13 @@ func main() {
 	domesticApp.HandleFunc("/services/update/setTrue", routes.SetTrueServiceState).Methods("PUT")
 	domesticApp.HandleFunc("/services/update/setFalse", routes.SetFalseServiceState).Methods("PUT")
 <<<<<<< HEAD
+<<<<<<< HEAD
 	domesticApp.HandleFunc("/services/search/type", routes.GetServiceByName).Methods("GET")
 =======
 >>>>>>> 6115b9b (Creation of search email users function)
+=======
+	domesticApp.HandleFunc("/services/search/type", routes.GetServiceByName).Methods("GET")
+>>>>>>> 4f6aa2b (just for prove)
 
 	/////////////////////////////////////////////////////////////////////// Professional Routes
 	// Añadir para buscar por nombre, por apellido y por correo electronico
@@ -128,6 +135,7 @@ func main() {
 	domesticApp.HandleFunc("/professional/search/name", routes.GetProfessionalHandlerByName).Methods("GET")
 	domesticApp.HandleFunc("/professional/search/last_name", routes.GetProfessionalHandlerByLastName).Methods("GET")
 	domesticApp.HandleFunc("/professional/request", routes.GetProfessionalRequests).Methods("GET")
+<<<<<<< HEAD
 
 	/////////////////////////////////////////////////////////////////////// Professional_offer
 
@@ -164,6 +172,8 @@ func main() {
 	domesticApp.HandleFunc("/punctuationt/search/{id}", routes.GetPunctuationTypeHandler).Methods("GET")
 	domesticApp.HandleFunc("/punctuationt/update", routes.UpdatePunctuationType).Methods("PUT")
 	domesticApp.HandleFunc("/punctuationt/delete", routes.DeletePunctuationTypeHandler).Methods("DELETE")
+=======
+>>>>>>> 4f6aa2b (just for prove)
 
 	/////////////////////////////////////////////////////////////////////// Professional_offer
 

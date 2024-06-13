@@ -56,15 +56,3 @@ type InnerUser struct {
 	//NewEmail      string     `json:"NewEmail"`
 	PublicService []byte `json:"PublicService"`
 }
-
-type UserSearchEmail struct {
-	Email string `json:"Email"`
-}
-
-type UserSearchName struct {
-	Name string `json:"Name"`
-}
-
-type UserSearchLastName struct {
-	LastName string `json:"LastName"`
-}
