@@ -26,8 +26,8 @@ func createDummyProfessional() {
 		IdentifyDocument: "Default_Professional",
 		PhotoDocument:    []byte{},
 	}
-	config.Db.FirstOrCreate(&dummyProfessional.Person)
-	config.Db.FirstOrCreate(&dummyProfessional)
+	config.Db.Create(&dummyProfessional.Person)
+	config.Db.Create(&dummyProfessional)
 
 }
 
@@ -44,8 +44,8 @@ func createDummyUser() {
 		},
 		PublicService: []byte{}}
 
-	config.Db.FirstOrCreate(&dummyUser.Person)
-	config.Db.FirstOrCreate(&dummyUser)
+	config.Db.Create(&dummyUser.Person)
+	config.Db.Create(&dummyUser)
 
 }
 

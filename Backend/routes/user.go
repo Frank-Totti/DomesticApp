@@ -437,9 +437,14 @@ func GetUserRequests(w http.ResponseWriter, r *http.Request) {
 
 	var request forms.UserRequestHistory
 	var totalRequestDone int
+<<<<<<< HEAD
 	var userRequestDone []models.Payment
 	var response forms.UserWriterHistory
 	var proveUser models.User
+=======
+	var userRequestDone []models.Request
+	var response forms.UserWriterHistory
+>>>>>>> 76553de (repair of users/request route)
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -454,6 +459,7 @@ func GetUserRequests(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to start transaction"})
 		return
 	}
+<<<<<<< HEAD
 
 	if err := transaction.Table("duser").Where("duser.id = ?", request.ID).First(&proveUser).Error; err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
@@ -470,6 +476,11 @@ func GetUserRequests(w http.ResponseWriter, r *http.Request) {
 		Joins("JOIN duser ON duser.id = request.user_id").
 		Where("duser.id = ? ", request.ID).
 		Find(&userRequestDone).
+=======
+	if err := transaction.Preload("User.Person").Preload("Professional.Person").Preload("User").Preload("Professional").Preload("Service").Select("request.*").
+		Joins("JOIN person ON person.owner_id = request.user_id").
+		Where("person.owner_id = ? AND person.owner_type = 'duser'", request.ID).Find(&userRequestDone).
+>>>>>>> 76553de (repair of users/request route)
 		Error; err != nil {
 		transaction.Rollback()
 		w.WriteHeader(http.StatusBadRequest)

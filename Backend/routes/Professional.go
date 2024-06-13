@@ -481,6 +481,7 @@ func GetGeneralPunctuationProfessionals(w http.ResponseWriter, r *http.Request) 
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if err := transaction.Preload("Person").Table("professional"). //Select("professional.*").
 		//Joins("JOIN professional ON person.owner_id = professional.id").
 		Joins("JOIN request ON professional.ID = request.Professional_ID ").
@@ -497,6 +498,11 @@ func GetGeneralPunctuationProfessionals(w http.ResponseWriter, r *http.Request) 
 		Joins("JOIN professional ON person.owner_id = professional.id").
 		Joins("JOIN request ON person.PID = request.Professional_ID ").
 >>>>>>> d5680f8 (partial actualization)
+=======
+	if err := transaction.Preload("Person").Table("professional"). //Select("professional.*").
+		//Joins("JOIN professional ON person.owner_id = professional.id").
+		Joins("JOIN request ON professional.ID = request.Professional_ID ").
+>>>>>>> 76553de (repair of users/request route)
 		Joins("JOIN punctuation ON request.RID = punctuation.RID").
 		Order("punctuation.general_score DESC").
 		Find(&professionals).Error; err != nil {
@@ -542,6 +548,7 @@ func GetParticularPunctuationProfessional(w http.ResponseWriter, r *http.Request
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if err := transaction.Preload("person").Table("professional").
 		//Joins("JOIN professional ON person.owner_id = professional.id").
 =======
@@ -561,6 +568,10 @@ func GetParticularPunctuationProfessional(w http.ResponseWriter, r *http.Request
 	if err := transaction.Table("person").Select("person.name, person.last_name").
 		Joins("JOIN professional ON person.owner_id = professional.id").
 >>>>>>> d5680f8 (partial actualization)
+=======
+	if err := transaction.Preload("person").Table("professional").
+		//Joins("JOIN professional ON person.owner_id = professional.id").
+>>>>>>> 76553de (repair of users/request route)
 		Joins("JOIN request ON professional.id = request.professional_id ").
 		Joins("JOIN punctuation ON request.rid = punctuation.rid").
 		Joins("JOIN punctuation_type ON punctuation.spid = punctuation_type.spid").
