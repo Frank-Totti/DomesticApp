@@ -580,6 +580,7 @@ func GetUserRequests(w http.ResponseWriter, r *http.Request) {
 	var userRequestDone []models.Payment
 	var response forms.UserWriterHistory
 	var proveUser models.User
+<<<<<<< HEAD
 =======
 	var userRequestDone []models.Request
 =======
@@ -587,6 +588,8 @@ func GetUserRequests(w http.ResponseWriter, r *http.Request) {
 >>>>>>> 6115b9b (Creation of search email users function)
 	var response forms.UserWriterHistory
 >>>>>>> 76553de (repair of users/request route)
+=======
+>>>>>>> b1c0de9 (proves completed)
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -603,6 +606,12 @@ func GetUserRequests(w http.ResponseWriter, r *http.Request) {
 	}
 <<<<<<< HEAD
 <<<<<<< HEAD
+
+	if err := transaction.Table("duser").Where("duser.id = ?", request.ID).First(&proveUser).Error; err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
+		return
+	}
 
 	if err := transaction.Table("duser").Where("duser.id = ?", request.ID).First(&proveUser).Error; err != nil {
 		w.WriteHeader(http.StatusInternalServerError)

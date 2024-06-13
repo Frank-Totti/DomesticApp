@@ -602,9 +602,13 @@ func GetProfessionalRequests(w http.ResponseWriter, r *http.Request) {
 	var profesionalRequestDone []models.Payment
 	var response forms.ProfessionalWriterHistory
 <<<<<<< HEAD
+<<<<<<< HEAD
 	var proveProfessional models.Professional
 =======
 >>>>>>> 4f6aa2b (just for prove)
+=======
+	var proveProfessional models.Professional
+>>>>>>> b1c0de9 (proves completed)
 
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -621,11 +625,15 @@ func GetProfessionalRequests(w http.ResponseWriter, r *http.Request) {
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b1c0de9 (proves completed)
 	if err := transaction.Table("professional").Where("professional.id = ?", request.ID).First(&proveProfessional).Error; err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find user"})
 		return
 	}
+<<<<<<< HEAD
 =======
 	/*
 		transaction.
@@ -639,6 +647,8 @@ func GetProfessionalRequests(w http.ResponseWriter, r *http.Request) {
 			Where("professional.id = ? ", request.ID).Find(&profesionalRequestDone)
 	*/
 >>>>>>> 4f6aa2b (just for prove)
+=======
+>>>>>>> b1c0de9 (proves completed)
 
 	if err := transaction.
 		Preload("Bill.Request.Professional.Person").
