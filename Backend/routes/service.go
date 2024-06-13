@@ -79,6 +79,46 @@ func GetActiveServices(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func GetServiceByName(w http.ResponseWriter, r *http.Request) { //Only for active services
+
+	var services []models.Service
+	transaction := config.Db.Begin()
+
+	var request forms.SearchServiceName
+
+	err := json.NewDecoder(r.Body).Decode(&request)
+
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid request payload"})
+		return
+	}
+
+	if err := transaction.Error; err != nil {
+		transaction.Rollback()
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to start transaction"})
+		return
+	}
+
+	if err := transaction.Where("state = ? AND type = ?", true, request.Type).Find(&services).Error; err != nil {
+		transaction.Rollback()
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed Find Services Data"})
+		return
+	}
+
+	if err := transaction.Commit().Error; err != nil {
+		transaction.Rollback()
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to commit transaction"})
+		return
+	}
+
+	json.NewEncoder(w).Encode(&services)
+
+}
+
 func GetNotActiveServices(w http.ResponseWriter, r *http.Request) {
 
 	var services []models.Service

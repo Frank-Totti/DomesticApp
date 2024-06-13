@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func CreatePaymentHandler(w http.ResponseWriter, r *http.Request){
+func CreatePaymentHandler(w http.ResponseWriter, r *http.Request) {
 
 	var payment models.Payment
 
@@ -48,8 +48,8 @@ func CreatePaymentHandler(w http.ResponseWriter, r *http.Request){
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(&payment)
 }
- 
-func GetPaymentHandler(w http.ResponseWriter, r *http Request){
+
+func GetPaymentHandler(w http.ResponseWriter, r *http.Request) {
 	var payment models.Payment
 
 	params := mux.Vars(r)
@@ -81,7 +81,7 @@ func GetPaymentHandler(w http.ResponseWriter, r *http Request){
 	json.NewEncoder(w).Encode(&payment)
 }
 
-func UpdateTotalPayment(w http.ResponseWriter, r *http.Request){
+func UpdateTotalPayment(w http.ResponseWriter, r *http.Request) {
 	var request forms.UpdateTotalPayment
 	var payment models.Payment
 
@@ -127,7 +127,7 @@ func UpdateTotalPayment(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(&payment)
 }
 
-func SetPaymentMethodNequi(w http.ResponseWriter, r *http.Request){
+func SetPaymentMethodNequi(w http.ResponseWriter, r *http.Request) {
 	var request forms.SetPaymentMethod
 	var payment models.Payment
 
@@ -155,10 +155,10 @@ func SetPaymentMethodNequi(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	if err := transaction.Model(&payment).Select("Nequi","Transferencia","Efectivo").Updates(map[string]interface{}{
-		"Nequi": true,
+	if err := transaction.Model(&payment).Select("Nequi", "Transferencia", "Efectivo").Updates(map[string]interface{}{
+		"Nequi":         true,
 		"Transferencia": false,
-		"Efectivo": false}).Error; err != nil {
+		"Efectivo":      false}).Error; err != nil {
 		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to update payment"})
@@ -176,7 +176,7 @@ func SetPaymentMethodNequi(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(&payment)
 }
 
-func SetPaymentMethodTransferencia(w http.ResponseWriter, r *http.Request){
+func SetPaymentMethodTransferencia(w http.ResponseWriter, r *http.Request) {
 	var request forms.SetPaymentMethod
 	var payment models.Payment
 
@@ -204,10 +204,10 @@ func SetPaymentMethodTransferencia(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	if err := transaction.Model(&payment).Select("Nequi","Transferencia","Efectivo").Updates(map[string]interface{}{
-		"Nequi": false,
+	if err := transaction.Model(&payment).Select("Nequi", "Transferencia", "Efectivo").Updates(map[string]interface{}{
+		"Nequi":         false,
 		"Transferencia": true,
-		"Efectivo": false}).Error; err != nil {
+		"Efectivo":      false}).Error; err != nil {
 		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to update payment"})
@@ -225,8 +225,8 @@ func SetPaymentMethodTransferencia(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(&payment)
 }
 
-func SetPaymentMethodEfectivo(w http.ResponseWriter, r *http.Request){
-	var request forms.SetNequiPayment
+func SetPaymentMethodEfectivo(w http.ResponseWriter, r *http.Request) {
+	var request forms.SetPaymentMethod
 	var payment models.Payment
 
 	err := json.NewDecoder(r.Body).Decode(&request)
@@ -253,10 +253,10 @@ func SetPaymentMethodEfectivo(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	if err := transaction.Model(&payment).Select("Nequi","Transferencia","Efectivo").Updates(map[string]interface{}{
-		"Nequi": false,
+	if err := transaction.Model(&payment).Select("Nequi", "Transferencia", "Efectivo").Updates(map[string]interface{}{
+		"Nequi":         false,
 		"Transferencia": false,
-		"Efectivo": true}).Error; err != nil {
+		"Efectivo":      true}).Error; err != nil {
 		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to update payment"})
@@ -273,4 +273,3 @@ func SetPaymentMethodEfectivo(w http.ResponseWriter, r *http.Request){
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(&payment)
 }
-

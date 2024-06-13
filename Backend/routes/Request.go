@@ -7,11 +7,9 @@ import (
 	"github.com/Frank-totti/DomesticApp/config"
 	"github.com/Frank-totti/DomesticApp/forms"
 	"github.com/Frank-totti/DomesticApp/models"
-	"github.com/gorilla/mux"
 )
 
-
-func CreateRequest(w http.ResponseWriter, r *http.Request){
+func CreateRequest(w http.ResponseWriter, r *http.Request) {
 
 	var request models.Request
 
@@ -19,7 +17,7 @@ func CreateRequest(w http.ResponseWriter, r *http.Request){
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error":"Invalid request payload"})
+		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid request payload"})
 		return
 	}
 
@@ -50,7 +48,7 @@ func CreateRequest(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(&request)
 }
 
-func GetActiveRequests(w http.ResponseWriter, r *http.Request){
+func GetActiveRequests(w http.ResponseWriter, r *http.Request) {
 	var requests []models.Request
 	transaction := config.Db.Begin()
 
@@ -75,10 +73,10 @@ func GetActiveRequests(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	json.NewEncoder.Encode(&requests)
+	json.NewEncoder(w).Encode(&requests)
 }
 
-func GetNotActiveRequests(w http.ResponseWriter, r.Request){
+func GetNotActiveRequests(w http.ResponseWriter, r *http.Request) {
 
 	var requests []models.Request
 	transaction := config.Db.Begin()
@@ -104,10 +102,10 @@ func GetNotActiveRequests(w http.ResponseWriter, r.Request){
 		return
 	}
 
-	json.NewEncoder.Encode(&requests)
+	json.NewEncoder(w).Encode(&requests)
 }
 
-func UpdateTravelHour(w http.ResponseWriter, r *http.Request){
+func UpdateTravelHour(w http.ResponseWriter, r *http.Request) {
 	var req forms.UpdateTravelHour
 	var request models.Request
 
@@ -153,7 +151,7 @@ func UpdateTravelHour(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(&request)
 }
 
-func SetTrueRequestState(w http.ResponseWriter, r *http.Request){
+func SetTrueRequestState(w http.ResponseWriter, r *http.Request) {
 	var req forms.SetRequestStateTrueFalse
 	var request models.Request
 
@@ -199,7 +197,7 @@ func SetTrueRequestState(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(&request)
 }
 
-func SetFalseRequestState(w http.ResponseWriter, r *http.Request){
+func SetFalseRequestState(w http.ResponseWriter, r *http.Request) {
 	var req forms.SetRequestStateTrueFalse
 	var request models.Request
 

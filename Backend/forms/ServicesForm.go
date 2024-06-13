@@ -11,3 +11,7 @@ type ServiceUpdateTDRequest struct {
 type ServiceUpdateSetTrueFalseState struct {
 	ID uint `json:"id"`
 }
+
+type SearchServiceName struct {
+	Type string `json:"Type"`
+}

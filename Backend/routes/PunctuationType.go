@@ -10,8 +10,8 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func CreatePunctuationType(w http.ResponseWriter, r *http.Request){
-	
+func CreatePunctuationType(w http.ResponseWriter, r *http.Request) {
+
 	var punctuationtype models.PunctuationType
 
 	err := json.NewDecoder(r.Body).Decode(&punctuationtype)
@@ -49,7 +49,7 @@ func CreatePunctuationType(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(&punctuationtype)
 }
 
-func GetPunctuationTypeHandler(w http.ResponseWriter, r *http.Request){
+func GetPunctuationTypeHandler(w http.ResponseWriter, r *http.Request) {
 
 	var punctuationtype models.PunctuationType
 
@@ -82,7 +82,7 @@ func GetPunctuationTypeHandler(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(&punctuationtype)
 }
 
-func UpdatePunctuationType(w http.ResponseWriter, r *http.Request){
+func UpdatePunctuationType(w http.ResponseWriter, r *http.Request) {
 
 	var request forms.UpdatePunctuationType
 	var punctuationtype models.PunctuationType
@@ -112,10 +112,10 @@ func UpdatePunctuationType(w http.ResponseWriter, r *http.Request){
 	}
 
 	if err := transaction.Model(&punctuationtype).Updates(map[string]interface{}{
-		"TimeTravelPoint": request.TimeTravelPoint, 
-		"KindnessPoint": request.KindnessPoint,
-		"TimeWorkPoint": request.TimeWorkPoint,
-		"QualityPoint": request.QualityPoint}).Error; err != nil {
+		"TimeTravelPoint": request.TimeTravelPoint,
+		"KindnessPoint":   request.KindnessPoint,
+		"TimeWorkPoint":   request.TimeWorkPoint,
+		"QualityPoint":    request.QualityPoint}).Error; err != nil {
 		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to update punctuation type"})
@@ -132,7 +132,7 @@ func UpdatePunctuationType(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(&punctuationtype)
 }
 
-func DeletePunctuationTypeHandler(w http.ResponseWriter, r *http.Request){
+func DeletePunctuationTypeHandler(w http.ResponseWriter, r *http.Request) {
 
 	var punctuationtype models.PunctuationType
 	var request forms.PunctuationTRequest
@@ -174,4 +174,3 @@ func DeletePunctuationTypeHandler(w http.ResponseWriter, r *http.Request){
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(&punctuationtype)
 }
-

@@ -14,122 +14,153 @@ int, text value respectly by default.
 
 type Person struct {
 	gorm.Model
-	PID       uint   `gorm:"primaryKey;autoIncrement"`
-	Address   string `gorm:"not null;varchar(50)"`
-	Name      string `gorm:"not null;varchar(100)"`
-	LastName  string `gorm:"not null;varchar(100)"`
-	TNumber   string `gorm:"not null;unique;varchar(12)"`
-	OwnerID   uint
-	OwnerType string
+	PID       uint   `gorm:"column:pid;primaryKey;autoIncrement"`
+	Address   string `gorm:"column:address;not null;varchar(50)"`
+	Name      string `gorm:"column:name;not null;varchar(100)"`
+	LastName  string `gorm:"column:last_name;not null;varchar(100)"`
+	TNumber   string `gorm:"column:t_number;not null;unique;varchar(12)"`
+	Password  string `gorm:"column:password;not null;varchar(25)"`
+	Email     string `gorm:"column:email;not null;varchar(100);unique"`
+	OwnerID   uint   `gorm:"not null"`
+	OwnerType string `gorm:"not null"`
+}
+
+// Declare the name in database
+func (Person) TableName() string {
+	return "person"
 }
 
 type User struct {
 	gorm.Model
 	Person        Person `gorm:"polymorphic:Owner;"`
-	Email         string `gorm:"not null;unique;varchar(30)"`
-	PublicService []byte
+	PublicService []byte `gorm:"column:public_service;not null"`
+}
+
+func (User) TableName() string {
+	return "duser"
 }
 
 type Professional struct {
 	gorm.Model
 	Person           Person    `gorm:"polymorphic:Owner;"`
-	ProfilePicture   []byte    `gorm:"not null"`
-	Birth            time.Time `gorm:"not null"`
-	IdentifyDocument string    `gorm:"not null;unique;varchar(15)"`
-	PhotoDocument    []byte    `gorm:"not null;unique"`
+	ProfilePicture   []byte    `gorm:"column:profile_picture;not null"`
+	Birth            time.Time `gorm:"column:birth"`
+	IdentifyDocument string    `gorm:"column:identify_document;not null;unique;varchar(15)"`
+	PhotoDocument    []byte    `gorm:"column:photo_document;not null;unique"`
+}
+
+func (Professional) TableName() string {
+	return "professional"
 }
 
 type Service struct {
 	gorm.Model
-	SID         uint   `gorm:"primaryKey;autoIncrement"`
-	Type        string `gorm:"not null;varchar(100);unique"`
-	Description string
-	State       bool `gorm:"varchar(30);default:true"`
+	SID         uint   `gorm:"column:sid;primaryKey;autoIncrement"`
+	Type        string `gorm:"column:type;varchar(100);unique"`
+	Description string `gorm:"column:description"`
+	// true State means that is active now the service, false means the service is unuse
+	State bool `gorm:"column:state;varchar(30);default:true"`
 }
 
-/*
-	type PriceType struct {
-		gorm.Model
-		PTID  uint   `gorm:"primaryKey;autoIncrement"`
-		Type  string `gorm:"not null;varchar(30)"`
-		Value uint   `gorm:"not null"`
+func (Service) TableName() string {
+	return "service"
+}
 
-		ProfessionalOffer ProfessionalOffer `gorm:"foreignKey:PTID;references:PTID"`
-	}
-*/
 type ProfessionalOffer struct {
 	gorm.Model
-	SID uint `gorm:"primaryKey"`
-	PID uint `gorm:"primaryKey"`
-	//PTID                      uint   `gorm:"primaryKey"`
-	Major                     string `gorm:"varchar(30)"`
-	RelationalExperience      string `gorm:"varchar(30)"`
-	RelationalExperiencePhoto []byte
-	MajorPhoto                []byte
-	UnitPrice                 float32
-	PricePerHour              float32
+	SID                       uint    `gorm:"column:sid;primaryKey"`
+	PID                       uint    `gorm:"column:pid;primaryKey"`
+	Major                     string  `gorm:"column:major;varchar(30)"`
+	RelationalExperience      string  `gorm:"column:relational_experience;varchar(30)"`
+	RelationalExperiencePhoto []byte  `gorm:"column:relational_experience_photo"`
+	MajorPhoto                []byte  `gorm:"column:major_photo"`
+	UnitPrice                 float64 `gorm:"column:unit_price;not null"`
+	PricePerHour              float64 `gorm:"column:price_per_hour;not null"`
 
-	Service Service `gorm:"foreignKey:SID;references:SID"`
-	Person  Person  `gorm:"foreignKey:PID;references:PID"` // cambiar por professional
-	//PriceType PriceType `gorm:"foreignKey:PTID;references:PTID"`
+	Service      Service      `gorm:"foreignKey:sid;references:sid"`
+	Proffesional Professional `gorm:"foreignKey:pid;references:ID"` // cambiar por professional
+}
+
+func (ProfessionalOffer) TableName() string {
+	return "professional_offer"
 }
 
 type Request struct {
 	gorm.Model
-	RID            uint `gorm:"primaryKey;autoIncrement"`
-	UserID         uint `gorm:"not null"`
-	ProfessionalID uint `gorm:"not null"`
-	SID            uint `gorm:"not null"`
-	TravelHour     time.Time
-	State          string `gorm:"varchar(50)"`
+	RID            uint      `gorm:"column:rid;primaryKey;autoIncrement"`
+	UserID         uint      `gorm:"column:user_id;not null"`
+	ProfessionalID uint      `gorm:"column:professional_id;not null"`
+	SID            uint      `gorm:"column:sid;not null"`
+	TravelHour     time.Time `gorm:"column:travel_hour;not null"`
+	State          string    `gorm:"column:state;varchar(50);default:'Travel'"`
 
-	User         User         `gorm:"foreignKey:UserID;references:ID;constraint:OnDelete:SET DEFAULT"`
-	Professional Professional `gorm:"foreignKey:ProfessionalID;references:ID;constraint:OnDelete:SET DEFAULT"`
-	Service      Service      `gorm:"foreignKey:SID;references:SID"`
+	User         User         `gorm:"foreignKey:user_id;references:ID;constraint:OnDelete:SET DEFAULT"`
+	Professional Professional `gorm:"foreignKey:professional_id;references:ID;constraint:OnDelete:SET DEFAULT"`
+	Service      Service      `gorm:"foreignKey:sid;references:sid"`
+}
+
+func (Request) TableName() string {
+	return "request"
 }
 
 type Bill struct {
 	gorm.Model
-	BID              uint `gorm:"primaryKey;autoIncrement"`
-	RID              uint `gorm:"not null"`
-	InitWorkHour     time.Time
-	FinalWorkHour    time.Time
-	FinalTravelHour  time.Time
-	DiscountsApplied float64
-	PartialPayment   float64
+	BID              uint      `gorm:"column:bid;primaryKey;autoIncrement"`
+	RID              uint      `gorm:"column:rid;not null"`
+	InitWorkHour     time.Time `gorm:"column:init_work_hour;not null"`
+	FinalWorkHour    time.Time `gorm:"column:final_work_hour;not null"`
+	FinalTravelHour  time.Time `gorm:"column:final_travel_hour;not null"`
+	DiscountsApplied float64   `gorm:"column:discounts_applied"`
+	PartialPayment   float64   `gorm:"column:partial_payment;not null"`
 
-	Request Request `gorm:"foreignKey:RID;references:RID"`
+	Request Request `gorm:"foreignKey:rid;references:rid"`
+}
+
+func (Bill) TableName() string {
+	return "bill"
 }
 
 type Payment struct {
 	gorm.Model
-	PYID          uint `gorm:"primaryKey;autoIncrement"`
-	BID           uint `gorm:"not null"`
-	TotalPayment  float64
-	Nequi         bool
-	Transferencia bool
-	Efectivo      bool
+	PYID          uint    `gorm:"column:pyid;primaryKey;autoIncrement"`
+	BID           uint    `gorm:"column:bid;not null"`
+	TotalPayment  float64 `gorm:"column:total_payment;not null"`
+	Nequi         bool    `gorm:"column:nequi"`
+	Transferencia bool    `gorm:"column:transferencia"`
+	Efectivo      bool    `gorm:"column:efectivo"`
 
-	Bill Bill `gorm:"foreignKey:BID;references:BID"`
+	Bill Bill `gorm:"foreignKey:bid;references:bid"`
+}
+
+func (Payment) TableName() string {
+	return "payment"
 }
 
 type Punctuation struct {
 	gorm.Model
-	SPID         uint `gorm:"primaryKey;autoIncrement"`
-	RID          uint `gorm:"not null"`
-	GeneralScore int
+	SPID         uint `gorm:"column:spid;primaryKey;autoIncrement"`
+	RID          uint `gorm:"column:rid;not null"`
+	GeneralScore int  `gorm:"column:general_score"`
 
-	Request Request `gorm:"foreignKey:RID;references:RID"`
+	Request Request `gorm:"foreignKey:rid;references:rid"`
+}
+
+func (Punctuation) TableName() string {
+	return "punctuation"
 }
 
 type PunctuationType struct {
 	gorm.Model
-	SPTID           uint `gorm:"primaryKey;autoIncrement"`
-	SPID            uint `gorm:"not null"`
-	TimeTravelPoint int
-	KindnessPoint   int
-	TimeWorkPoint   int
-	QualityPoint    int
+	SPTID           uint `gorm:"column:sptid;primaryKey;autoIncrement"`
+	SPID            uint `gorm:"column:spid;not null"`
+	TimeTravelPoint int  `gorm:"column:time_travel_point"`
+	KindnessPoint   int  `gorm:"column:kindness_point"`
+	TimeWorkPoint   int  `gorm:"column:time_work_point"`
+	QualityPoint    int  `gorm:"column:quality_point"`
 
-	Punctuation Punctuation `gorm:"foreignKey:SPID;references:SPID"`
+	Punctuation Punctuation `gorm:"foreignKey:spid;references:spid"`
+}
+
+func (PunctuationType) TableName() string {
+	return "punctuation_type"
 }

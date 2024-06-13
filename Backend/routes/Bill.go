@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func CreateBill(w http.ResponseWriter, r *http.Request){
+func CreateBill(w http.ResponseWriter, r *http.Request) {
 	var bill models.Bill
 
 	err := json.NewDecoder(r.Body).Decode(&bill)
@@ -48,7 +48,7 @@ func CreateBill(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(&bill)
 }
 
-func GetBillsHandler(w http.ResponseWriter, r *http.Request){
+func GetBillsHandler(w http.ResponseWriter, r *http.Request) {
 	var bills []models.Bill
 
 	transaction := config.Db.Begin()
@@ -78,7 +78,7 @@ func GetBillsHandler(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(&bills)
 }
 
-func GetBillHandler(w http.ResponseWriter, r *http.Request){
+func GetBillHandler(w http.ResponseWriter, r *http.Request) {
 	var bill models.Bill
 
 	params := mux.Vars(r)
@@ -110,8 +110,8 @@ func GetBillHandler(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(&bill)
 }
 
-func UpdateBill(w http.ResponseWriter, r *http.Request){
-	
+func UpdateBill(w http.ResponseWriter, r *http.Request) {
+
 	var requestBill forms.UpdateBill
 	var bill models.Bill
 
@@ -140,11 +140,8 @@ func UpdateBill(w http.ResponseWriter, r *http.Request){
 	}
 
 	if err := transaction.Model(&bill).Updates(map[string]interface{}{
-		"InitWorkHour": request.InitWorkHour, 
-		"FinalWorkHour": request.FinalWorkHour,
-		"FinalTravelHour": request.FinalTravelHour,
-		"DiscountsApplied": request.DiscountsApplied,
-		"PartialPayment": request.PartialPayment}).Error; err != nil {
+		"discounts_applied": requestBill.DiscountsApplied,
+		"partial_payment":   requestBill.PartialPayment}).Error; err != nil {
 		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to update bill"})

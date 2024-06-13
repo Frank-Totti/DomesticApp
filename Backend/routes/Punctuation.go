@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func CreatePunctuationHandler(w http.ResponseWriter, r *http.Request){
+func CreatePunctuationHandler(w http.ResponseWriter, r *http.Request) {
 
 	var punctuation models.Punctuation
 
@@ -18,7 +18,7 @@ func CreatePunctuationHandler(w http.ResponseWriter, r *http.Request){
 
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(map[string]string{"error":"Invalid request payload"})
+		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid request payload"})
 		return
 	}
 
@@ -49,7 +49,7 @@ func CreatePunctuationHandler(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(&punctuation)
 }
 
-func GetPunctuationHandler(w http.ResponseWriter, r *http.Request){
+func GetPunctuationHandler(w http.ResponseWriter, r *http.Request) {
 	var punctuation models.Punctuation
 
 	params := mux.Vars(r)
@@ -81,8 +81,8 @@ func GetPunctuationHandler(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(&punctuation)
 }
 
-func UpdateGeneralScoreHandler(w http.ResponseWriter, r *http.Request){
-	
+func UpdateGeneralScoreHandler(w http.ResponseWriter, r *http.Request) {
+
 	var request forms.UpdateGeneralScore
 	var punctuation models.Punctuation
 
@@ -128,11 +128,11 @@ func UpdateGeneralScoreHandler(w http.ResponseWriter, r *http.Request){
 	json.NewEncoder(w).Encode(&punctuation)
 }
 
-func DeletePunctuationHandler(w http.ResponseWriter, r *http.Request){
-	
+func DeletePunctuationHandler(w http.ResponseWriter, r *http.Request) {
+
 	var punctuation models.Punctuation
 	var request forms.PunctuationRequest
-	
+
 	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid request payload"})
@@ -154,7 +154,7 @@ func DeletePunctuationHandler(w http.ResponseWriter, r *http.Request){
 		return
 	}
 
-	if err := transaction.Where("SPID = ?", request.ID).Delete(&PunctuationType{}).Error; err != nil {
+	if err := transaction.Where("SPID = ?", request.ID).Delete(&models.PunctuationType{}).Error; err != nil {
 		transaction.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to delete on cascade"})
