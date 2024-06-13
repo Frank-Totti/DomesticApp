@@ -26,8 +26,8 @@ func createDummyProfessional() {
 		IdentifyDocument: "Default_Professional",
 		PhotoDocument:    []byte{},
 	}
-	config.Db.Create(&dummyProfessional.Person)
-	config.Db.Create(&dummyProfessional)
+	config.Db.FirstOrCreate(&dummyProfessional.Person)
+	config.Db.FirstOrCreate(&dummyProfessional)
 
 }
 
@@ -44,8 +44,8 @@ func createDummyUser() {
 		},
 		PublicService: []byte{}}
 
-	config.Db.Create(&dummyUser.Person)
-	config.Db.Create(&dummyUser)
+	config.Db.FirstOrCreate(&dummyUser.Person)
+	config.Db.FirstOrCreate(&dummyUser)
 
 }
 
@@ -89,9 +89,13 @@ func main() {
 	domesticApp.HandleFunc("/users/create", routes.CreateUserHandler).Methods("POST")   // create a user
 	domesticApp.HandleFunc("/users/update", routes.UpdateUserHandler).Methods("PUT")    // update a user
 	domesticApp.HandleFunc("/users/delete", routes.DeleteUserHandler).Methods("DELETE") // delete a user
+<<<<<<< HEAD
 	domesticApp.HandleFunc("/users/request", routes.GetUserRequests).Methods("GET")
 	domesticApp.HandleFunc("/users/search/name", routes.GetUserHandlerByName).Methods("GET")
 	domesticApp.HandleFunc("/users/search/last_name", routes.GetUserHandlerByLastName).Methods("GET")
+=======
+	domesticApp.HandleFunc("/users/request", routes.GetRequests).Methods("GET")
+>>>>>>> 75b4821 (repair of delete functions)
 
 	//////////////////////////////////////////////////////////////////////// Services Routes
 	// Añadir para buscar por nombre de servicio o tipo de servicio

@@ -432,6 +432,9 @@ func DeleteProffesioanlHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 75b4821 (repair of delete functions)
 	if err := transation.Unscoped().Delete(&professional.Person).Error; err != nil {
 		transation.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
@@ -440,11 +443,14 @@ func DeleteProffesioanlHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if err := transation.Unscoped().Delete(&professional).Error; err != nil {
+<<<<<<< HEAD
 		transation.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find professional"})
 =======
 	if err := config.Db.Delete(&models.Professional{}, request.ID).Error; err != nil {
+=======
+>>>>>>> 75b4821 (repair of delete functions)
 		transation.Rollback()
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to find professional"})
@@ -535,6 +541,7 @@ func GetParticularPunctuationProfessional(w http.ResponseWriter, r *http.Request
 	}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	if err := transaction.Preload("person").Table("professional").
 		//Joins("JOIN professional ON person.owner_id = professional.id").
 =======
@@ -549,6 +556,8 @@ func GetParticularPunctuationProfessional(w http.ResponseWriter, r *http.Request
 			Find(&professionals)
 	*/
 
+=======
+>>>>>>> 75b4821 (repair of delete functions)
 	if err := transaction.Table("person").Select("person.name, person.last_name").
 		Joins("JOIN professional ON person.owner_id = professional.id").
 >>>>>>> d5680f8 (partial actualization)
