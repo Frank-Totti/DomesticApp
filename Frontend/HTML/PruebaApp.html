@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DomesticApp - Aplicación Cliente</title>
+    <link rel="stylesheet" href="css/styles_app_customer.css">
+
+</head>
+<body>
+    <script src="javascript/providers.js"></script>
+    <div class="content">
+        <header>
+            <div class="logo">
+                <img src="logo/logo.png" alt="Logo de DomesticApp">
+                <span>DomesticApp</span>
+            </div>
+            <nav>
+                <ul>
+                    <li><button onclick="location.href='homepage.html'">Homepage</button></li>
+                    <li><button onclick="location.href='log_in_service.html'">Log in</button></li>
+                    <li><button onclick="location.href='sign_in_service.html'">Sign in</button></li>
+                    <li><button onclick="location.href='app_customer.html'">App customer</button></li>
+                    <li><button onclick="location.href='app_service.html'">App service</button></li>
+                </ul>
+            </nav>
+        </header>
+        <main>
+            <div class="sidebar">
+                <div class="profile-section">
+                    <img id="profile-pic" src="https://via.placeholder.com/150" alt="Foto de perfil">
+                    <div class="name-section">
+                        <h2 id="user-name">Nombre del Cliente</h2>
+                        <h2 id="user-lastname">Apellido del Cliente</h2>
+                    </div>
+                    <div class="user-info">
+                        <p><strong>Correo Electrónico:</strong> <span id="user-email">Correo Electrónico</span></p>
+                        <p><strong>Dirección:</strong> <span id="user-address">Dirección</span></p>
+                        <p><strong>Número de Teléfono:</strong> <span id="user-phone">Número de Teléfono</span></p>
+                    </div>
+                </div>
+                <footer>
+                    <p>&copy; 2024 DomesticApp. Todos los derechos reservados.</p>
+                </footer>
+            </div> 
+            <div class="content-area">
+                <div class="services-section">
+                    <h2>Solicita un servicio en Domestic App</h2>
+                    <div class="scrollbar">
+                    <ul class="service-list">
+                        <li class="service-item" onclick="loadServiceProviders('Servicio de Limpieza');highlightService(this)">
+                            <h3>Servicio de Limpieza</h3>
+                            <p>Descripción breve del servicio de limpieza.</p>
+                        </li>
+                        <li class="service-item" onclick="loadServiceProviders('Servicio de Cuidado de Mascotas');highlightService(this)">
+                            <h3>Servicio de Cuidado de Mascotas</h3>
+                            <p>Descripción breve del servicio de cuidado de mascotas.</p>
+                        </li>
+                        <li class="service-item" onclick="loadServiceProviders('Servicio de Limpieza de Autos');highlightService(this)">
+                            <h3>Servicio de Limpieza de Autos</h3>
+                            <p>Descripción breve del servicio de limpieza de autos.</p>
+                        </li>
+                        <li class="service-item" onclick="loadServiceProviders('Servicio de Asistencia Técnica');highlightService(this)">
+                            <h3>Servicio de Asistencia Técnica</h3>
+                            <p>Descripción breve del servicio de asistencia técnica.</p>
+                        </li>
+                         <li class="service-item" onclick="loadServiceProviders('Servicio de Plomería');highlightService(this)">
+                            <h3>Servicio de Plomería</h3>
+                            <p>Reparación de tuberías, grifos y sistemas de agua.</p>
+                        </li>
+                        <li class="service-item" onclick="loadServiceProviders('Servicio de Electricidad');highlightService(this)">
+                            <h3>Servicio de Electricidad</h3>
+                            <p>Instalación y reparación de sistemas eléctricos.</p>
+                        </li>
+                        <li class="service-item" onclick="loadServiceProviders('Servicio de Jardinería');highlightService(this)">
+                            <h3>Servicio de Jardinería</h3>
+                            <p>Mantenimiento de jardines y diseño de paisajes.</p>
+                        </li>
+                        <li class="service-item" onclick="loadServiceProviders('Servicio de Carpintería');highlightService(this)">
+                            <h3>Servicio de Carpintería</h3>
+                            <p>Fabricación y reparación de muebles de madera.</p>
+                        </li>
+                        <li class="service-item" onclick="loadServiceProviders('Servicio de Pintura');highlightService(this)">
+                            <h3>Servicio de Pintura</h3>
+                            <p>Pintura de interiores y exteriores.</p>
+                        </li>
+                        <li class="service-item" onclick="loadServiceProviders('Servicio de Limpieza de Autos');highlightService(this)">
+                            <h3>Servicio de Limpieza de Autos</h3>
+                            <p>Limpieza profunda y detallada de vehículos.</p>
+                        </li>
+                    </div>
+                    </ul>
+                </div>
+                <div class="service-providers-section">
+                    <h1>Servidores</h1>
+                    <div class="scrollbar-2">
+                        <div class="service-providers-container">
+                            <div class="service-providers-upper">
+                                <ul class="service-providers-list" id="service-providers-list">
+                                    <!-- Aquí se agregarán los proveedores de servicio dinámicamente -->
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                   
+                    <h1>Costo Servidor</h1>
+                    <div class="service-providers-lower">
+                        <div class="provider-details" id="provider-details">
+                            <!-- Aquí se mostrará la información adicional del proveedor -->
+                        </div>
+                        <div class="bill-info">
+                            
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </main>
+    </div>
+
+    <script>
+    
+        function loadServiceProviders(serviceName) {
+            const serviceProviders = getServiceProviders(serviceName);
+            const providersList = document.getElementById('service-providers-list');
+            
+            // Limpiar la lista antes de agregar nuevos elementos
+            providersList.innerHTML = '';
+    
+            // Generar elementos para cada proveedor
+            serviceProviders.forEach(provider => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('service-provider-item');
+                listItem.onclick = function() {
+                    showProviderDetails(provider);
+                    highlightProvider(this);
+                };
+    
+                const profilePic = document.createElement('img');
+                profilePic.src = provider.profilePic;
+                profilePic.alt = 'Foto de perfil';
+                profilePic.classList.add('service-provider-img');
+    
+                const providerInfo = document.createElement('div');
+                providerInfo.classList.add('service-provider-info');
+    
+                const fullName = document.createElement('h3');
+                fullName.innerText = provider.fullName;
+    
+                const id = document.createElement('p');
+                id.innerHTML = `<strong>ID:</strong> ${provider.id}`;
+    
+                const rating = document.createElement('p');
+                rating.innerHTML = `<strong>Calificación:</strong> ${provider.rating}`;
+    
+                providerInfo.appendChild(fullName);
+                providerInfo.appendChild(id);
+                providerInfo.appendChild(rating);
+    
+                listItem.appendChild(profilePic);
+                listItem.appendChild(providerInfo);
+    
+                providersList.appendChild(listItem);
+            });
+        }
+    
+        function showProviderDetails(provider) {
+            const providerDetails = document.getElementById('provider-details');
+            providerDetails.innerHTML = `
+                <p><strong>Nombre:</strong> ${provider.fullName}</p>
+                <p><strong>ID:</strong> ${provider.id}</p>
+                <p><strong>Especialidad:</strong> ${provider.major}</p>
+                <p><strong>Precio por Unidad:</strong> ${provider.unitPrice}</p>
+                <p><strong>Precio por Hora:</strong> ${provider.hourPrice}</p>
+                <p><strong>Calificación A:</strong> ${provider.ratingA}</p>
+                <p><strong>Calificación B:</strong> ${provider.ratingB}</p>
+                <p><strong>Calificación C:</strong> ${provider.ratingC}</p>
+                <p><strong>Calificación D:</strong> ${provider.ratingD}</p>
+            `;
+        }
+    
+/*fullName: "Marta López",
+            id: "543210",
+            rating: "4.8",
+            profilePic: "https://via.placeholder.com/150",
+            mayor: "Relational experiences",
+            unitPrice: "29",
+            hourPrice: "34",
+            ratingA: "4.7",
+            ratingB: "4.8",
+            ratingC: "4.9",
+            ratingD: "4.6"*/
+
+        function highlightProvider(providerElement) {
+            const providerItems = document.querySelectorAll('.service-provider-item');
+            providerItems.forEach(item => item.classList.remove('selected-provider'));
+            providerElement.classList.add('selected-provider');
+        }
+    
+        // Función para obtener los proveedores de un servicio específico
+        function getServiceProviders(serviceName) {
+            return providers[serviceName] || [];
+        }
+    
+        // Carga inicial de proveedores al iniciar la página
+        loadServiceProviders("Servicio de Limpieza");
+    
+        document.addEventListener('DOMContentLoaded', fetchUserData);
+    
+        function fetchUserData() {
+            // Datos ficticios del usuario
+
+    
+            // Asignar los datos al HTML
+            document.getElementById('user-name').innerText = userData.firstName;
+            document.getElementById('user-lastname').innerText = userData.lastName;
+            document.getElementById('user-email').innerText = userData.email;
+            document.getElementById('user-address').innerText = userData.address;
+            document.getElementById('user-phone').innerText = userData.phone;
+            document.getElementById('profile-pic').src = userData.profilePic;
+        }
+    
+        function highlightService(serviceElement) {
+            const serviceItems = document.querySelectorAll('.service-item');
+            serviceItems.forEach(item => item.classList.remove('selected'));
+            serviceElement.classList.add('selected');
+        }
+    </script>
+    </body>
+    </html>
+</body>
+</html>
