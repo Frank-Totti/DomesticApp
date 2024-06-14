@@ -119,6 +119,10 @@ func main() {
 
 	/////////////////////////////////////////////////////////////////////// Professional_offer
 
+	domesticApp.HandleFunc("/professional_offers/create", routes.CreateOffert).Methods("POST")
+	domesticApp.HandleFunc("/professional_offers/search/service/type", routes.GetOffertsByServiceType).Methods("GET")
+	domesticApp.HandleFunc("/professional_offers/search", routes.GetOfferts).Methods("GET")
+
 	//////////////////////////////////////////////////////////////////////// Request Routes
 	domesticApp.HandleFunc("/requests/create", routes.CreateRequest).Methods("POST")
 	domesticApp.HandleFunc("/request/search/true", routes.GetActiveRequests).Methods("GET")

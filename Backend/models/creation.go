@@ -78,7 +78,7 @@ type ProfessionalOffer struct {
 	PricePerHour              float64 `gorm:"column:price_per_hour;not null"`
 
 	Service      Service      `gorm:"foreignKey:sid;references:sid"`
-	Proffesional Professional `gorm:"foreignKey:pid;references:ID"` // cambiar por professional
+	Professional Professional `gorm:"foreignKey:pid;references:ID"` // cambiar por professional
 }
 
 func (ProfessionalOffer) TableName() string {
