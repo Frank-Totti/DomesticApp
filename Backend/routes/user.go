@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"encoding/base64"
 	"encoding/json"
 	"net/http"
 
@@ -317,8 +318,15 @@ func UpdateUserHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if len(userRequest.UpdateUser.PublicService) > 0 {
-		user.PublicService = userRequest.UpdateUser.PublicService
+	public_service_update, err := base64.StdEncoding.DecodeString(userRequest.UpdateUser.PublicService)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Invalid base64 image data"})
+		return
+	}
+
+	if len(public_service_update) > 0 {
+		user.PublicService = public_service_update
 	}
 
 	if userRequest.UpdateUser.Person.Address != "" {

@@ -46,5 +46,5 @@ type UserRequest struct {
 type InnerUser struct {
 	Person PersonForm `json:"Person"`
 	//NewEmail      string     `json:"NewEmail"`
-	PublicService []byte `json:"PublicService"`
+	PublicService string `json:"PublicService"`
 }

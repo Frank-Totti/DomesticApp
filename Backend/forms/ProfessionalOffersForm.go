@@ -1,15 +1,15 @@
 package forms
 
-type CreatePoRequest struct {
-	Service_id uint `json:"ServiceID"`
-
-	Professional_id uint `json:"ProfessionalID"`
+type UpdatePoRequest struct {
+	Professional_id uint `json:"Professional_id"`
 
 	Major string `json:"Major"`
 
-	RelationalExperiencePhoto []byte `json:"REPhoto"`
+	RelationalExperience string `json:"RExperience"`
 
-	MajorPhoto []byte `json:"MPhoto"`
+	RelationalExperiencePhoto string `json:"REPhoto"` // []byte
+
+	MajorPhoto string `json:"MPhoto"` // []byte
 
 	UnitPrice float64 `json:"UnitPrice"`
 
