@@ -73,7 +73,11 @@ func UserLoginHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Respondemos con un estado de éxito y opcionalmente con un mensaje
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(map[string]string{"message": "Login successful"})
+
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"success": true,
+		"token":   token,
+	})
 }
 
 func UserLogoutHandler(w http.ResponseWriter, r *http.Request) {

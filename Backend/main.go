@@ -103,48 +103,61 @@ func main() {
 	domesticApp.HandleFunc("/users/search/name", routes.GetUserHandlerByName).Methods("GET")
 	domesticApp.HandleFunc("/users/search/last_name", routes.GetUserHandlerByLastName).Methods("GET")
 
+	domesticApp.HandleFunc("/users/login", routes.UserLoginHandler).Methods("POST")
+
+	domesticApp.HandleFunc("/users/logout", routes.UserLogoutHandler).Methods("GET")
+
 	//////////////////////////////////////////////////////////////////////// Services Routes
 	// Añadir para buscar por nombre de servicio o tipo de servicio
 
-	/*
-			 router.Handle("/protected/user", jwtMiddleware(http.HandlerFunc(routes.ProtectedUserHandler))).Methods("GET")
-		    router.Handle("/protected/professional", jwtMiddleware(http.HandlerFunc(routes.ProtectedProfessionalHandler))).Methods("GET")
-	*/
-	domesticApp.Handle("/services/search/true", security.JWTMiddleware(http.HandlerFunc(routes.GetActiveServices))).Methods("GET")
-	//domesticApp.HandleFunc("/services/search/true", routes.GetActiveServices).Methods("GET")
+	//domesticApp.Handle("/services/search/true", security.JWTMiddleware(http.HandlerFunc(routes.GetActiveServices))).Methods("GET")
+	domesticApp.HandleFunc("/services/search/true", routes.GetActiveServices).Methods("GET")
 	domesticApp.HandleFunc("/services/search/false", routes.GetNotActiveServices).Methods("GET")
 	domesticApp.HandleFunc("/services/create", routes.CreateService).Methods("POST")
 	domesticApp.HandleFunc("/services/update/TD", routes.UpdateTypeDescriptionService).Methods("PUT") // TD = Type or Description
 	domesticApp.HandleFunc("/services/update/setTrue", routes.SetTrueServiceState).Methods("PUT")
 	domesticApp.HandleFunc("/services/update/setFalse", routes.SetFalseServiceState).Methods("PUT")
-	//domesticApp.HandleFunc("/services/search/type", routes.GetServiceByName).Methods("GET")
-	domesticApp.Handle("/services/search/type", security.JWTMiddleware(http.HandlerFunc(routes.GetServiceByName))).Methods("GET")
+	domesticApp.HandleFunc("/services/search/type", routes.GetServiceByName).Methods("GET")
+	//domesticApp.Handle("/services/search/type", security.JWTMiddleware(http.HandlerFunc(routes.GetServiceByName))).Methods("GET")
 
 	/////////////////////////////////////////////////////////////////////// Professional Routes
 	// Añadir para buscar por nombre, por apellido y por correo electronico
+
+	domesticApp.HandleFunc("/professional/login", routes.ProfessionalLoginHandler).Methods("POST")
+
+	domesticApp.HandleFunc("/professional/logout", routes.ProfessionalLogoutHandler).Methods("GET")
+
+	domesticApp.Handle("/professional/update", security.JWTMiddleware(http.HandlerFunc(routes.UpdateProffesionalHandler))).Methods("PUT")
+
+	domesticApp.Handle("/professional/delete", security.JWTMiddleware(http.HandlerFunc(routes.UpdateProffesionalHandler))).Methods("DELETE")
+
+	domesticApp.Handle("/professional/punctuation/general", security.JWTMiddleware(http.HandlerFunc(routes.GetGeneralPunctuationProfessionals))).Methods("GET")
+
+	domesticApp.Handle("/professional/punctuation/particular", security.JWTMiddleware(http.HandlerFunc(routes.GetParticularPunctuationProfessional))).Methods("GET")
+
 	domesticApp.HandleFunc("/professional/search", routes.GetProffesionalsHandler).Methods("GET")
 	domesticApp.HandleFunc("/professional/search/{id}", routes.GetProffesionalHandlerById).Methods("GET")
 	domesticApp.HandleFunc("/professional/create", routes.CreateProffesionalHandler).Methods("POST")
-	domesticApp.HandleFunc("/professional/update", routes.UpdateProffesionalHandler).Methods("PUT")
-	domesticApp.HandleFunc("/professional/delete", routes.DeleteProffesioanlHandler).Methods("DELETE")
-	domesticApp.HandleFunc("/professional/punctuation/general", routes.GetGeneralPunctuationProfessionals).Methods("GET")
-	domesticApp.HandleFunc("/professional/punctuation/particular", routes.GetParticularPunctuationProfessional).Methods("GET")
+	//domesticApp.HandleFunc("/professional/update", routes.UpdateProffesionalHandler).Methods("PUT")
+	//domesticApp.HandleFunc("/professional/delete", routes.DeleteProffesioanlHandler).Methods("DELETE")
+	//domesticApp.HandleFunc("/professional/punctuation/general", routes.GetGeneralPunctuationProfessionals).Methods("GET")
+	//domesticApp.HandleFunc("/professional/punctuation/particular", routes.GetParticularPunctuationProfessional).Methods("GET")
 	domesticApp.HandleFunc("/professional/search/email", routes.GetProfessionalHandlerByEmail).Methods("GET")
 	domesticApp.HandleFunc("/professional/search/name", routes.GetProfessionalHandlerByName).Methods("GET")
 	domesticApp.HandleFunc("/professional/search/last_name", routes.GetProfessionalHandlerByLastName).Methods("GET")
-	domesticApp.HandleFunc("/professional/request", routes.GetProfessionalRequests).Methods("GET")
+	domesticApp.HandleFunc("/professional/request", routes.GetProfessionalRequests).Methods("POST")
 
 	/////////////////////////////////////////////////////////////////////// Professional_offer
 
-	domesticApp.Handle("/professional_offers/create", security.JWTMiddleware(http.HandlerFunc(routes.CreateOffert))).Methods("POST")
+	//domesticApp.Handle("/professional_offers/create", security.JWTMiddleware(http.HandlerFunc(routes.CreateOffert))).Methods("GET")
 
-	domesticApp.Handle("/professional_offers/search/service/type", security.JWTMiddleware(http.HandlerFunc(routes.GetOffertsByServiceType))).Methods("GET")
+	//domesticApp.Handle("/professional_offers/search/service/type", security.JWTMiddleware(http.HandlerFunc(routes.GetOffertsByServiceType))).Methods("GET")
 
-	domesticApp.Handle("/professional_offers/search", security.JWTMiddleware(http.HandlerFunc(routes.GetOfferts))).Methods("GET")
+	//domesticApp.Handle("/professional_offers/search", security.JWTMiddleware(http.HandlerFunc(routes.GetOfferts))).Methods("GET")
 
-	//domesticApp.HandleFunc("/professional_offers/create", routes.CreateOffert).Methods("POST")
-	//domesticApp.HandleFunc("/professional_offers/search/service/type", routes.GetOffertsByServiceType).Methods("GET")
-	//domesticApp.HandleFunc("/professional_offers/search", routes.GetOfferts).Methods("GET")
+	domesticApp.HandleFunc("/professional_offers/create", routes.CreateOffert).Methods("POST")
+	domesticApp.HandleFunc("/professional_offers/search/service/type", routes.GetOffertsByServiceType).Methods("POST")
+	domesticApp.HandleFunc("/professional_offers/search", routes.GetOfferts).Methods("GET")
 
 	//////////////////////////////////////////////////////////////////////// Request Routes
 	domesticApp.HandleFunc("/requests/create", routes.CreateRequest).Methods("POST")

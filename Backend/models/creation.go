@@ -93,7 +93,7 @@ type Request struct {
 	ProfessionalID uint      `gorm:"column:professional_id;not null"`
 	SID            uint      `gorm:"column:sid;not null"`
 	TravelHour     time.Time `gorm:"column:travel_hour;not null"`
-	State          string    `gorm:"column:state;varchar(50);default:'Travel'"`
+	State          bool      `gorm:"column:state;default:false"`
 
 	User         User         `gorm:"foreignKey:user_id;references:ID;constraint:OnDelete:SET DEFAULT"`
 	Professional Professional `gorm:"foreignKey:professional_id;references:ID;constraint:OnDelete:SET DEFAULT"`

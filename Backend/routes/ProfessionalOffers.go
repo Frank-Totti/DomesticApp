@@ -103,7 +103,7 @@ func GetOffertsByServiceType(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := transaction.Preload("Professional.Person").Preload("Service").Table("professional_offer").
+	if err := transaction.Preload("Professional.Person").Preload("Service").Table("professional_offer").Select("Distinct professional_offer.*").
 		Joins("JOIN service ON professional_offer.sid = service.sid").Where("service.type LIKE ? AND service.state = ?", serviceType.Type+"%", true).Find(&offerts).Error; err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		json.NewEncoder(w).Encode(map[string]string{"Error": "Failed to find service type"})
@@ -117,7 +117,7 @@ func GetOffertsByServiceType(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusFound)
+	//w.WriteHeader(http.StatusFound)
 	json.NewEncoder(w).Encode(&offerts)
 
 }

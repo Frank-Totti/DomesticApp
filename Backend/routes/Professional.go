@@ -3,13 +3,93 @@ package routes
 import (
 	"encoding/base64"
 	"encoding/json"
+	"fmt"
 	"net/http"
+	"time"
 
+	security "github.com/Frank-totti/DomesticApp/Security"
 	"github.com/Frank-totti/DomesticApp/config"
 	"github.com/Frank-totti/DomesticApp/forms"
 	"github.com/Frank-totti/DomesticApp/models"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
+	"golang.org/x/crypto/bcrypt"
 )
+
+func ProfessionalLoginHandler(w http.ResponseWriter, r *http.Request) {
+	var creds security.Credentials
+	var professional models.Professional
+	err := json.NewDecoder(r.Body).Decode(&creds)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	transaction := config.Db.Begin()
+
+	if transaction.Error != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to start transaction"})
+		return
+	}
+
+	if err := transaction.Debug().Preload("Person").Table("professional").
+		Joins("JOIN person ON professional.ID = person.owner_id AND person.owner_type = 'professional'").
+		Where("person.email = ?", creds.Email).First(&professional).Error; err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	// Verificar la contraseña
+	err = bcrypt.CompareHashAndPassword([]byte(professional.Person.Password), []byte(creds.Password))
+	if err != nil {
+		fmt.Println("aquí es pa")
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	// Generar token JWT
+
+	expirationTime := time.Now().Add(5 * time.Minute)
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"email": creds.Email,
+		"exp":   expirationTime.Unix(),
+	})
+	tokenString, err := token.SignedString([]byte("my_secret_key"))
+
+	//token, err := security.GenerateJWT(creds.Email)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// Configurar cookie con el token JWT
+	http.SetCookie(w, &http.Cookie{
+		Name:    "token",
+		Value:   tokenString,
+		Expires: expirationTime,
+	})
+
+	// Respondemos con un estado de éxito y opcionalmente con un mensaje
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]interface{}{
+		"success": true,
+		"token":   token,
+	})
+}
+
+func ProfessionalLogoutHandler(w http.ResponseWriter, r *http.Request) {
+	// Eliminar cookie de token
+	http.SetCookie(w, &http.Cookie{
+		Name:    "token",
+		Value:   "",
+		Expires: time.Now().Add(-time.Hour),
+	})
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Logout successful"})
+}
 
 func CreateProffesionalHandler(w http.ResponseWriter, r *http.Request) {
 
@@ -573,7 +653,7 @@ func GetProfessionalRequests(w http.ResponseWriter, r *http.Request) {
 		Joins("JOIN bill ON bill.bid = payment.bid").
 		Joins("JOIN request ON request.rid = bill.rid").
 		Joins("JOIN professional ON professional.id = request.professional_id").
-		Where("professional.id = ? ", request.ID).
+		Where("professional.id = ? AND request.state = ? ", request.ID, request.State).
 		Find(&profesionalRequestDone).
 		Error; err != nil {
 		transaction.Rollback()

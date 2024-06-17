@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DomesticApp - Homepage</title>
-    <link rel="stylesheet" href="../CSS/styles_homepage.css"> // 
+    <link rel="stylesheet" href="../CSS/styles_app_provider.css">
+    <script src="../JavaScripts/app_service.js"></script>
 </head>
 <body>
     <header>
         <div class="logo">
-            <img src="../logo.png" alt="Logo de DomesticApp">
+            <img src="../logo/logo.png" alt="Logo de DomesticApp">
             <span>DomesticApp</span>
         </div>
         <nav>
@@ -23,10 +24,47 @@
         </nav>
     </header>
     <main>
-        <!-- Aquí va el contenido principal -->
+        <div class="sidebar">
+            <div class="profile-section">
+                <img id="profile-pic" src="https://via.placeholder.com/150" alt="Foto de perfil">
+                <div class="name-section">
+                    <h2 id="user-name">Nombre del Cliente</h2>
+                    <h2 id="user-lastname">Apellido del Cliente</h2>
+                </div>
+                <div class="user-info">
+                    <p><strong>Correo Electrónico:</strong> <span id="user-email">Correo Electrónico</span></p>
+                    <p><strong>Dirección:</strong> <span id="user-address">Dirección</span></p>
+                    <p><strong>Número de Teléfono:</strong> <span id="user-phone">Número de Teléfono</span></p>
+                </div>
+            </div>
+            <footer>
+                <p>&copy; 2024 DomesticApp. Todos los derechos reservados.</p>
+            </footer>
+        </div> 
+        <div class="content-area">
+            <div class="request-section">
+                <h1>Solicitudes Recibidas</h1>
+                <div class="request-container">
+                    <div class="scrollbar">
+                        <ul class="request-list" id="request-list">
+                            <!-- Aquí se agregarán los request en estado false -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="request-completed-section">
+                <h1>Solicitudes Completadas</h1>
+                <div class="request-completed-container">
+                    <div class="scrollbar-2">
+                        <ul class="request-completed-list" id="request-completed-list">
+                                <!-- Aquí se agregarán los request en estado true -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
     </main>
-    <footer>
-        <!-- Aquí va el pie de página -->
-    </footer>
+</div>
+
 </body>
 </html>

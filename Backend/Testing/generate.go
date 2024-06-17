@@ -56,12 +56,17 @@ func InsertUsers(db *gorm.DB) {
 
 func InsertProfessionals(db *gorm.DB) {
 	for i := 50; i < 100; i++ {
+		crypt_password, err := HashPassword(fmt.Sprintf("Contraseña %d", i+1))
+		if err != nil {
+			log.Fatal("Imposible to Hash Password")
+			return
+		}
 		person := models.Person{
 			Address:  fmt.Sprintf("Dirección %d", i+1),
 			Name:     fmt.Sprintf("Nombre %d", i+1),
 			LastName: fmt.Sprintf("Apellido %d", i+1),
 			TNumber:  fmt.Sprintf("Número %012d", i+1),
-			Password: fmt.Sprintf("Contraseña %d", i+1),
+			Password: crypt_password,
 			Email:    fmt.Sprintf("email%d@example.com", i+1),
 		}
 		profesional := models.Professional{Person: person, Birth: time.Now(), IdentifyDocument: fmt.Sprintf("Documento %d", i), PhotoDocument: GenerateRandomBytes(16), ProfilePicture: GenerateRandomBytes(16)}
@@ -127,12 +132,15 @@ func InsertRequests(db *gorm.DB) {
 		professional := professionals[rand.Intn(len(professionals))]
 		service := services[rand.Intn(len(services))]
 
+		posible_state := []bool{false, true}
+		numero := posible_state[rand.Intn(len(posible_state))]
+
 		request := models.Request{
 			UserID:         user.ID,
 			ProfessionalID: professional.ID,
 			SID:            service.SID,
 			TravelHour:     time.Now(), // Hora de viaje aleatoria
-			State:          fmt.Sprintf("Estado %d", i+1),
+			State:          numero,
 		}
 		db.Create(&request)
 	}

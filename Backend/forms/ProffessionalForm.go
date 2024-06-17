@@ -39,5 +39,6 @@ type ProfessionalWriterHistory struct {
 }
 
 type ProfessionalRequestHistory struct {
-	ID uint `json:"id"`
+	ID    uint `json:"id"`
+	State bool `json:"State"`
 }
