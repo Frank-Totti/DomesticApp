@@ -4,6 +4,9 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/gorilla/handlers"
+
+	security "github.com/Frank-totti/DomesticApp/Security"
 	testing "github.com/Frank-totti/DomesticApp/Testing"
 	"github.com/Frank-totti/DomesticApp/config"
 	"github.com/Frank-totti/DomesticApp/models"
@@ -86,22 +89,36 @@ func main() {
 	domesticApp.HandleFunc("/users/search", routes.GetUsersHandler).Methods("GET") // get all users
 	domesticApp.HandleFunc("/users/search/id/{id}", routes.GetUserHandlerById).Methods("GET")
 	domesticApp.HandleFunc("/users/search/email", routes.GetUserHandlerByEmail).Methods("GET")
-	domesticApp.HandleFunc("/users/create", routes.CreateUserHandler).Methods("POST")   // create a user
-	domesticApp.HandleFunc("/users/update", routes.UpdateUserHandler).Methods("PUT")    // update a user
-	domesticApp.HandleFunc("/users/delete", routes.DeleteUserHandler).Methods("DELETE") // delete a user
-	domesticApp.HandleFunc("/users/request", routes.GetUserRequests).Methods("GET")
+	domesticApp.HandleFunc("/users/create", routes.CreateUserHandler).Methods("POST") // create a user
+
+	domesticApp.Handle("/users/update", security.JWTMiddleware(http.HandlerFunc(routes.UpdateUserHandler))).Methods("PUT")
+
+	domesticApp.Handle("/users/delete", security.JWTMiddleware(http.HandlerFunc(routes.DeleteUserHandler))).Methods("DELETE")
+	//domesticApp.HandleFunc("/users/update", routes.UpdateUserHandler).Methods("PUT")    // update a user
+	//domesticApp.HandleFunc("/users/delete", routes.DeleteUserHandler).Methods("DELETE") // delete a user
+
+	domesticApp.Handle("/users/request", security.JWTMiddleware(http.HandlerFunc(routes.GetUserRequests))).Methods("GET")
+	//domesticApp.HandleFunc("/users/request", routes.GetUserRequests).Methods("GET")
+
 	domesticApp.HandleFunc("/users/search/name", routes.GetUserHandlerByName).Methods("GET")
 	domesticApp.HandleFunc("/users/search/last_name", routes.GetUserHandlerByLastName).Methods("GET")
 
 	//////////////////////////////////////////////////////////////////////// Services Routes
 	// Añadir para buscar por nombre de servicio o tipo de servicio
-	domesticApp.HandleFunc("/services/search/true", routes.GetActiveServices).Methods("GET")
+
+	/*
+			 router.Handle("/protected/user", jwtMiddleware(http.HandlerFunc(routes.ProtectedUserHandler))).Methods("GET")
+		    router.Handle("/protected/professional", jwtMiddleware(http.HandlerFunc(routes.ProtectedProfessionalHandler))).Methods("GET")
+	*/
+	domesticApp.Handle("/services/search/true", security.JWTMiddleware(http.HandlerFunc(routes.GetActiveServices))).Methods("GET")
+	//domesticApp.HandleFunc("/services/search/true", routes.GetActiveServices).Methods("GET")
 	domesticApp.HandleFunc("/services/search/false", routes.GetNotActiveServices).Methods("GET")
 	domesticApp.HandleFunc("/services/create", routes.CreateService).Methods("POST")
 	domesticApp.HandleFunc("/services/update/TD", routes.UpdateTypeDescriptionService).Methods("PUT") // TD = Type or Description
 	domesticApp.HandleFunc("/services/update/setTrue", routes.SetTrueServiceState).Methods("PUT")
 	domesticApp.HandleFunc("/services/update/setFalse", routes.SetFalseServiceState).Methods("PUT")
-	domesticApp.HandleFunc("/services/search/type", routes.GetServiceByName).Methods("GET")
+	//domesticApp.HandleFunc("/services/search/type", routes.GetServiceByName).Methods("GET")
+	domesticApp.Handle("/services/search/type", security.JWTMiddleware(http.HandlerFunc(routes.GetServiceByName))).Methods("GET")
 
 	/////////////////////////////////////////////////////////////////////// Professional Routes
 	// Añadir para buscar por nombre, por apellido y por correo electronico
@@ -119,9 +136,15 @@ func main() {
 
 	/////////////////////////////////////////////////////////////////////// Professional_offer
 
-	domesticApp.HandleFunc("/professional_offers/create", routes.CreateOffert).Methods("POST")
-	domesticApp.HandleFunc("/professional_offers/search/service/type", routes.GetOffertsByServiceType).Methods("GET")
-	domesticApp.HandleFunc("/professional_offers/search", routes.GetOfferts).Methods("GET")
+	domesticApp.Handle("/professional_offers/create", security.JWTMiddleware(http.HandlerFunc(routes.CreateOffert))).Methods("POST")
+
+	domesticApp.Handle("/professional_offers/search/service/type", security.JWTMiddleware(http.HandlerFunc(routes.GetOffertsByServiceType))).Methods("GET")
+
+	domesticApp.Handle("/professional_offers/search", security.JWTMiddleware(http.HandlerFunc(routes.GetOfferts))).Methods("GET")
+
+	//domesticApp.HandleFunc("/professional_offers/create", routes.CreateOffert).Methods("POST")
+	//domesticApp.HandleFunc("/professional_offers/search/service/type", routes.GetOffertsByServiceType).Methods("GET")
+	//domesticApp.HandleFunc("/professional_offers/search", routes.GetOfferts).Methods("GET")
 
 	//////////////////////////////////////////////////////////////////////// Request Routes
 	domesticApp.HandleFunc("/requests/create", routes.CreateRequest).Methods("POST")
@@ -157,6 +180,10 @@ func main() {
 	domesticApp.HandleFunc("/punctuationt/update", routes.UpdatePunctuationType).Methods("PUT")
 	domesticApp.HandleFunc("/punctuationt/delete", routes.DeletePunctuationTypeHandler).Methods("DELETE")
 
-	http.ListenAndServe(":3000", domesticApp)
+	headersOk := handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"})
+	originsOk := handlers.AllowedOrigins([]string{"http://localhost:8080"}) // Aquí debes poner el origen correcto de tu frontend
+	methodsOk := handlers.AllowedMethods([]string{"GET", "HEAD", "POST", "PUT", "OPTIONS"})
+
+	http.ListenAndServe(":3000", handlers.CORS(originsOk, headersOk, methodsOk)(domesticApp))
 
 }

@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DomesticApp - Registro de Servidores</title>
-    <link rel="stylesheet" href="css/styles_register_server.css">
+    <link rel="stylesheet" href="../CSS/styles_register_server.css">
 </head>
 <body>
     <div class="content">
         <header>
             <div class="logo">
-                <img src="logo/logo.png" alt="Logo de DomesticApp">
+                <img src="../logo/logo.png" alt="Logo de DomesticApp">
                 <span>DomesticApp</span>
             </div>
             <nav>
@@ -25,7 +25,7 @@
         </header>
         <main>
             <div class="logo-section">
-                <img src="logo/logo.png" alt="Logo Grande de DomesticApp">
+                <img src="../logo/logo.png" alt="Logo Grande de DomesticApp">
                 <h1>DomesticApp</h1>
                 <p class="slogan">Lo mejor para tu hogar en un solo click</p>
             </div>
@@ -46,26 +46,21 @@
                     <input type="text" id="idNumber" name="idNumber" required>
                     <label for="phone">Número de Teléfono:</label>
                     <input type="tel" id="phone" name="phone" required>
-                    <label for="birthDate">Fecha de Nacimiento:</label>
-                    <input type="date" id="birthDate" name="birthDate" required>
-                    <label for="profilePic">Foto de Perfil:</label>
-                    <input type="file" id="profilePic" name="profilePic" accept="image/*" required>
-                    <button type="button" onclick="handleSubmit()">Registrarse</button>
+                
+                    <label for="Public_Service">Servicio Publico:</label>
+                    <input type="file" id="Public_Service" name="Public_Service" accept="image/*" required>
+                    <button type="submit">Registrarse</button>
                 </form>
                 <div class="divider"></div>
                 <p class="comment">¿Ya tienes una cuenta?</p>
                 <button class="login-button" onclick="location.href='log_in_service.html'">Iniciar Sesión</button>
             </div>
+            <div id="message"></div>
         </main>
     </div>
     <footer>
         <p>&copy; 2024 DomesticApp. Todos los derechos reservados.</p>
     </footer>
-    <script>
-        function handleSubmit() {
-            // Simular el almacenamiento de los datos ingresados y redirigir a la segunda página
-            window.location.href = 'register_step2.html';
-        }
-    </script>
+    <script src="../JavaScripts/sign_in_service.js"></script>
 </body>
 </html>

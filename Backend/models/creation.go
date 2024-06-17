@@ -14,13 +14,14 @@ int, text value respectly by default.
 
 type Person struct {
 	gorm.Model
-	PID       uint   `gorm:"column:pid;primaryKey;autoIncrement"`
-	Address   string `gorm:"column:address;not null;varchar(50)"`
-	Name      string `gorm:"column:name;not null;varchar(100)"`
-	LastName  string `gorm:"column:last_name;not null;varchar(100)"`
-	TNumber   string `gorm:"column:t_number;not null;unique;varchar(12)"`
-	Password  string `gorm:"column:password;not null;varchar(25)"`
-	Email     string `gorm:"column:email;not null;varchar(100);unique"`
+	PID      uint   `gorm:"column:pid;primaryKey;autoIncrement"`
+	Address  string `gorm:"column:address;not null;varchar(50)"`
+	Name     string `gorm:"column:name;not null;varchar(100)"`
+	LastName string `gorm:"column:last_name;not null;varchar(100)"`
+	TNumber  string `gorm:"column:t_number;not null;unique;varchar(12)"`
+	Password string `gorm:"column:password;not null;varchar(25)"`
+	Email    string `gorm:"column:email;not null;varchar(100);unique"`
+	//ProfilePicture []byte `gorm:"column:profile_picture;not null"`
 	OwnerID   uint   `gorm:"not null"`
 	OwnerType string `gorm:"not null"`
 }

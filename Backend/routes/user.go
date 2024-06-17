@@ -4,11 +4,15 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"net/http"
+	"time"
 
+	security "github.com/Frank-totti/DomesticApp/Security"
 	"github.com/Frank-totti/DomesticApp/config"
 	"github.com/Frank-totti/DomesticApp/forms"
 	"github.com/Frank-totti/DomesticApp/models"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gorilla/mux"
+	"golang.org/x/crypto/bcrypt"
 )
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
@@ -17,8 +21,76 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func UserLoginHandler(w http.ResponseWriter, r *http.Request) {
+	var creds security.Credentials
+	var user models.User
+	err := json.NewDecoder(r.Body).Decode(&creds)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	transaction := config.Db.Begin()
+
+	if transaction.Error != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		json.NewEncoder(w).Encode(map[string]string{"error": "Failed to start transaction"})
+		return
+	}
+
+	if err := transaction.Preload("Person").Table("duser").
+		Joins("JOIN person ON duser.ID = person.owner_id AND person.owner_type = 'duser'").
+		Where("person.email = ?", creds.Email).First(&user).Error; err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	// Verificar la contraseña
+	err = bcrypt.CompareHashAndPassword([]byte(user.Person.Password), []byte(creds.Password))
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
+
+	// Generar token JWT
+	expirationTime := time.Now().Add(5 * time.Minute)
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"email": creds.Email,
+		"exp":   expirationTime.Unix(),
+	})
+	tokenString, err := token.SignedString([]byte("my_secret_key"))
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	// Configurar cookie con el token JWT
+	http.SetCookie(w, &http.Cookie{
+		Name:    "token",
+		Value:   tokenString,
+		Expires: expirationTime,
+	})
+
+	// Respondemos con un estado de éxito y opcionalmente con un mensaje
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Login successful"})
+}
+
+func UserLogoutHandler(w http.ResponseWriter, r *http.Request) {
+	// Eliminar cookie de token
+	http.SetCookie(w, &http.Cookie{
+		Name:    "token",
+		Value:   "",
+		Expires: time.Now().Add(-time.Hour),
+	})
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Logout successful"})
+}
+
 func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("Content-Type", "application/json")
 	var user models.User // Create the struct to save them
 
 	err := json.NewDecoder(r.Body).Decode(&user) // get the request data in the client
@@ -71,8 +143,13 @@ func CreateUserHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(&user)
+	//w.WriteHeader(http.StatusCreated)
+	response := map[string]interface{}{
+		"success": true,
+		"message": "User created successfully",
+	}
+
+	json.NewEncoder(w).Encode(response)
 }
 
 func GetUserHandlerById(w http.ResponseWriter, r *http.Request) {
